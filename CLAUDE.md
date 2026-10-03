@@ -9,7 +9,7 @@ Railway (plano Hobby) em `yuri-jorge.up.railway.app`, um link que já está publ
 |---|---|
 | Framework | Astro, `output: "static"` |
 | Linguagem | TypeScript strict + `noUncheckedIndexedAccess` |
-| Interatividade | Ilhas React, só `client:visible` (álbum de badges, filtro de projetos) |
+| Interatividade | Ilhas **Preact** (TSX), só `client:visible` (álbum de badges). React 19 custava 68 KB gz; Preact 10,9 KB (decisão do Yuri, 2026-10-03) |
 | Estilo | Tailwind v4 + tokens em CSS, tema por `data-theme` |
 | Conteúdo | Content Collections + Zod (`src/lib/schemas.ts`), texto `Localized = { en, pt }` |
 | Testes | Vitest, Playwright, @axe-core/playwright, Lighthouse CI |
@@ -32,7 +32,7 @@ Railway (plano Hobby) em `yuri-jorge.up.railway.app`, um link que já está publ
   e isso é proposital (RN-01).
 - **Projeto `public` tem `repo`; projeto `restricted` não tem** (RN-02). `draft: true` nunca vai para
   produção (RN-03).
-- **Nenhum JS bloqueia a primeira pintura; React só baixa quando a ilha fica visível** (JS inicial
+- **Nenhum JS bloqueia a primeira pintura; o framework da ilha só baixa quando ela fica visível** (JS inicial
   ≤ 10 KB gz, RNF-02). Ilha só com `client:visible`; nada de `client:load` na home.
 - **Sem biblioteca de UI nem de ícones.** Ícones são SVG à mão em `src/components/icons/`.
 - **Sem a variante `dark:` do Tailwind.** O tema mora inteiro em CSS (`src/styles/`).
@@ -46,7 +46,7 @@ Railway (plano Hobby) em `yuri-jorge.up.railway.app`, um link que já está publ
 | Agente | Use para |
 |---|---|
 | `ui-ux` | Direção visual, tokens, temas, tipografia, motion, layout responsivo, design do álbum de badges |
-| `frontend` | Páginas e componentes Astro, ilhas React, schemas de conteúdo, i18n, SEO técnico |
+| `frontend` | Páginas e componentes Astro, ilhas Preact, schemas de conteúdo, i18n, SEO técnico |
 | `marketing` | Texto EN/PT para recrutador, entradas em `src/content/**`, novos projetos, SEO de texto |
 | `qa` | Testes, axe, Lighthouse, orçamentos e matriz de viewports; aponta, não corrige |
 | `publicador` | Commit, push e deploy na Railway, saúde e consumo do serviço |
@@ -63,6 +63,6 @@ Os agentes não escrevem na própria memória: terminam com um bloco `## Para a 
 ## Fases
 
 0 Fundação → 1 Direção visual ∥ 2 Conteúdo → 3 Seções → 4 Qualidade → 5 Publicação (PRD §12).
-**Estado atual (2026-10-03): Etapa 1 do plano concluída (Fases 0, 1 e 2: fundação, direção visual A
-"Caderno & Caneta" e conteúdo aprovado), aguardando os commits locais. A seguir: Etapa 2, seções e
-qualidade (Fases 3 e 4).**
+**Estado atual (2026-10-03): Etapas 1 e 2 concluídas e commitadas (site completo, portões verdes:
+Lighthouse 100 nas 4 páginas, axe 0 violações). A seguir: Checkpoint C do Yuri e Etapa 3, publicação
+(GitHub + Railway).**
