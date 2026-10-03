@@ -65,6 +65,23 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Página curta (404) não deixa o rodapé no meio da tela: o main ocupa a sobra. A barra e o
+     skip link são fixed, então os itens do fluxo são só main e rodapé. min-width: 0 porque item
+     flex não encolhe abaixo do conteúdo e abriria rolagem horizontal (RNF-04). Só na tela: o
+     CV impresso segue o fluxo normal de página. */
+  @media screen {
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    body > main {
+      flex: 1 0 auto;
+      min-width: 0;
+    }
+  }
+
   h1,
   h2,
   h3,
@@ -190,14 +207,20 @@
 
 /* Rede de segurança: com reduce, nada se move. Componentes que trocam transform por estado
    (o adesivo) ainda precisam da própria regra reduce, porque o estado final não pode depender
-   de transição (skill §6). */
+   de transição (skill §6).
+   0s e não 0.01ms: qualquer duração positiva mantém a transição viva, e a de `visibility` (o
+   verso do selo) só vira "visible" no quadro seguinte, o que deixava um Tab rápido pular o
+   Verify. O atraso também zera: o verso esperava --duration-base para sumir. Com duração 0s
+   e `forwards`, o traço de caneta aparece pronto. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
 }

@@ -1,0 +1,35 @@
+---
+// RF-09: e-mail (mailto), LinkedIn, GitHub e o CV em PDF. Externos em nova aba com noopener.
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { t, type Locale } from "@/i18n/utils";
+import type { Profile } from "@/lib/content";
+
+interface Props {
+  locale: Locale;
+  profile: Profile;
+}
+
+const { locale, profile } = Astro.props;
+const me = profile.data;
+---
+
+<div class="contact">
+  <ButtonLink href={`mailto:${me.email}`} locale={locale}>{me.email}</ButtonLink>
+  <ButtonLink href={me.links.linkedin} locale={locale} variant="secondary" external>
+    {t("cta.linkedin", locale)}
+  </ButtonLink>
+  <ButtonLink href={me.links.github} locale={locale} variant="secondary" external>
+    {t("cta.github", locale)}
+  </ButtonLink>
+  <ButtonLink href={me.cv[locale]} locale={locale} variant="secondary" icon="download" download>
+    {t("cta.downloadCv", locale)}
+  </ButtonLink>
+</div>
+
+<style>
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

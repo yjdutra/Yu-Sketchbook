@@ -1,0 +1,302 @@
+---
+// Fonte do CV em PDF (scripts/cv.ts imprime esta página em A4). /cv/ e /pt/cv/ ficam fora do
+// índice e do sitemap (astro.config.mjs). O conteúdo é o do site: perfil, experiências com os
+// achievements, formação, projetos, credenciais e contato. RN-07: sem telefone.
+// `data-cv-pdf` diz ao script onde gravar o PDF: o caminho mora só no profile.yaml.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t, type Locale } from "@/i18n/utils";
+import { getCredentials, getJourney, getProfile, getPublishedProjects } from "@/lib/content";
+import { formatDate, formatPeriod } from "@/lib/dates";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const [profile, journey, projects, credentials] = await Promise.all([
+  getProfile(),
+  getJourney(),
+  getPublishedProjects(),
+  getCredentials(),
+]);
+const me = profile.data;
+const present = t("experience.present", locale);
+const site = Astro.site;
+// No papel o link não é clicável: o endereço aparece por extenso, sem "https://".
+const bare = (url: string) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+const portfolio = site ? bare(new URL(locale === "en" ? "/" : "/pt/", site).href) : undefined;
+const allCredentials = [...credentials.album, ...credentials.list];
+---
+
+<BaseLayout
+  title={`${me.name} · ${t("cv.title", locale)}`}
+  description={t("cv.description", locale)}
+  locale={locale}
+  noindex
+  bare
+>
+  <article class="cv" data-cv-pdf={me.cv[locale]}>
+    <header class="cv__head">
+      <h1>{me.name}</h1>
+      <p class="cv__role">{me.headline[locale]}</p>
+      <ul class="cv__contact">
+        <li>{me.location[locale]}</li>
+        <li><a href={`mailto:${me.email}`}>{me.email}</a></li>
+        <li><a href={me.links.linkedin}>{bare(me.links.linkedin)}</a></li>
+        <li><a href={me.links.github}>{bare(me.links.github)}</a></li>
+        {
+          portfolio && site && (
+            <li>
+              {t("cv.portfolio", locale)}:{" "}
+              <a href={new URL(locale === "en" ? "/" : "/pt/", site).href}>{portfolio}</a>
+            </li>
+          )
+        }
+      </ul>
+    </header>
+
+    <section aria-labelledby="cv-profile">
+      <h2 id="cv-profile">{t("cv.profile", locale)}</h2>
+      <p>{me.summary[locale]}</p>
+    </section>
+
+    <section aria-labelledby="cv-experience">
+      <h2 id="cv-experience">{t("cv.experience", locale)}</h2>
+      {
+        journey.map(({ experience, achievements }) => (
+          <div class="cv__job">
+            <div class="cv__job-head">
+              {/* nbsp: o "·" fica com o cargo e nunca abre a linha seguinte. */}
+              <h3>
+                {experience.data.role[locale]}&nbsp;· {experience.data.company}
+              </h3>
+              <p class="cv__when">
+                {formatPeriod(experience.data.start, experience.data.end, locale, present)} ·{" "}
+                {experience.data.location}
+              </p>
+            </div>
+            <p class="cv__summary">{experience.data.summary[locale]}</p>
+            {achievements.length > 0 && (
+              <ul class="cv__results">
+                {/* A mesma forma da Trajetória: título, o que fiz e o resultado. Só "título.
+                    resultado" repetia o título em várias conquistas. */}
+                {achievements.map((achievement) => (
+                  <li>
+                    <strong>{achievement.data.title[locale]}.</strong>{" "}
+                    {achievement.data.action[locale]} {achievement.data.result[locale]}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
+      }
+    </section>
+
+    {
+      projects.length > 0 && (
+        <section aria-labelledby="cv-projects">
+          <h2 id="cv-projects">{t("section.projects", locale)}</h2>
+          <ul class="cv__plain">
+            {projects.map((project) => (
+              <li>
+                <strong>{project.data.name}</strong> · {project.data.tagline[locale]}
+                {project.data.repo && <span class="cv__url"> {bare(project.data.repo)}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      me.education.length > 0 && (
+        <section aria-labelledby="cv-education">
+          <h2 id="cv-education">{t("journey.education", locale)}</h2>
+          <ul class="cv__plain">
+            {me.education.map((item) => (
+              <li>
+                <strong>{item.degree[locale]}</strong> · {item.institution} ·{" "}
+                <span class="cv__when">{formatPeriod(item.start, item.end, locale, present)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      allCredentials.length > 0 && (
+        <section aria-labelledby="cv-credentials">
+          <h2 id="cv-credentials">{t("section.credentials", locale)}</h2>
+          <ul class="cv__plain">
+            {allCredentials.map((credential) => (
+              <li>
+                <strong>{credential.data.name}</strong> · {credential.data.issuer}
+                {credential.data.issuedAt && (
+                  <span class="cv__when"> · {formatDate(credential.data.issuedAt, locale)}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  /* Folha A4: na tela, uma página centrada; na impressão, só o conteúdo, sem fundo. */
+  @page {
+    size: A4;
+    margin: 13mm 15mm;
+  }
+
+  .cv {
+    max-width: 210mm;
+    margin: var(--space-7) auto;
+    padding: 13mm 15mm;
+    border: 1px solid var(--border);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-card);
+    color: var(--ink);
+    font-size: 9.6pt;
+    line-height: 1.42;
+  }
+
+  .cv__head {
+    padding-bottom: 3mm;
+    border-bottom: 1.5px solid var(--accent);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 22pt;
+    line-height: 1.1;
+  }
+
+  .cv__role {
+    margin: 1mm 0 2mm;
+    color: var(--ink-muted);
+    font-size: 11.5pt;
+    font-weight: 600;
+  }
+
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4mm;
+    margin: 0;
+    padding: 0;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 8.4pt;
+    list-style: none;
+  }
+
+  a {
+    color: var(--accent-text);
+    text-decoration: none;
+  }
+
+  section {
+    margin-top: 4mm;
+  }
+
+  /* O título não fica sozinho no pé da página, e seção curta não se parte. */
+  section:not(:has(.cv__job)) {
+    break-inside: avoid;
+  }
+
+  h2 {
+    break-after: avoid;
+    margin: 0 0 1.5mm;
+    color: var(--accent-text);
+    font-family: var(--font-mono);
+    font-size: 9pt;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  /* A experiência pode se partir entre páginas (inteira, ela deixava meia página em branco); o
+     que não se parte é o cabeçalho do cargo, separado do texto, nem uma conquista no meio. */
+  .cv__job-head {
+    break-after: avoid;
+  }
+
+  .cv__results li {
+    break-inside: avoid;
+  }
+
+  .cv__job + .cv__job {
+    margin-top: 3mm;
+  }
+
+  .cv__job-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 4mm;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 10.6pt;
+    line-height: 1.3;
+  }
+
+  .cv__when,
+  .cv__url {
+    color: var(--ink-subtle);
+    font-family: var(--font-mono);
+    font-size: 8.2pt;
+  }
+
+  .cv__summary {
+    margin-top: 0.5mm;
+    color: var(--ink-muted);
+  }
+
+  .cv__results {
+    margin: 1mm 0 0;
+    padding-left: 4mm;
+  }
+
+  .cv__results li + li {
+    margin-top: 0.4mm;
+  }
+
+  .cv__results strong,
+  .cv__plain strong {
+    font-weight: 600;
+  }
+
+  .cv__plain {
+    display: grid;
+    gap: 0.8mm;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media print {
+    :global(body) {
+      background: none;
+    }
+
+    .cv {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+  }
+</style>

@@ -21,28 +21,58 @@ const localizable = <T extends z.ZodType>(value: T) => z.union([value, localized
 const githubUrl = z.url({ protocol: /^https$/, hostname: /^github\.com$/ });
 const httpsUrl = z.url({ protocol: /^https$/ });
 
-export const profileSchema = z.object({
-  name: z.string().min(1),
-  headline: text, // "Software Engineer & AI Engineer"
-  valueProp: text, // a frase do Hero, em linguagem leiga
-  summary: text, // 2 a 3 frases
-  location: text, // "Goiânia, Brazil · open to remote"
-  email: z.email(),
-  links: z.object({ linkedin: httpsUrl, github: httpsUrl }),
-  // Um PDF por idioma, servido de public/cv/. RN-07: o PDF não tem telefone.
-  cv: localized(z.string().regex(/^\/cv\/[a-z0-9-]+\.pdf$/, "caminho esperado: /cv/<nome>.pdf")),
-  // RF-16: a formação fecha a Trajetória, depois das experiências.
-  education: z
-    .array(
-      z.object({
-        institution: z.string().min(1), // nome próprio, não traduz
-        degree: text,
-        start: z.coerce.date(),
-        end: z.coerce.date().optional(), // ausente = em andamento
-      }),
-    )
-    .default([]),
-});
+export const profileSchema = z
+  .object({
+    name: z.string().min(1),
+    headline: text, // "Software Engineer & AI Engineer"
+    valueProp: text, // a frase do Hero, em linguagem leiga
+    // Trecho da valueProp que leva o traço de caneta. Ausente: a última oração (src/lib/emphasis.ts).
+    valuePropMark: text.optional(),
+    // A nota "At a glance" ao lado do Hero: 2 a 4 números do resumo. Vazio: a nota não aparece.
+    glance: z
+      .array(z.object({ value: localizable(z.string().trim().min(1)), label: text }))
+      .max(4)
+      .default([]),
+    summary: text, // 2 a 3 frases
+    location: text, // "Goiânia, Brazil · open to remote"
+    email: z.email(),
+    links: z.object({ linkedin: httpsUrl, github: httpsUrl }),
+    // Um PDF por idioma, servido de public/cv/. RN-07: o PDF não tem telefone.
+    cv: localized(z.string().regex(/^\/cv\/[a-z0-9-]+\.pdf$/, "caminho esperado: /cv/<nome>.pdf")),
+    // RF-16: a formação fecha a Trajetória, depois das experiências.
+    education: z
+      .array(
+        z.object({
+          institution: z.string().min(1), // nome próprio, não traduz
+          degree: text,
+          start: z.coerce.date(),
+          end: z.coerce.date().optional(), // ausente = em andamento
+        }),
+      )
+      .default([]),
+  })
+  .superRefine((profile, ctx) => {
+    // O traço precisa achar o trecho nos dois idiomas; senão ele some sem aviso de um deles.
+    const mark = profile.valuePropMark;
+    if (!mark) return;
+    for (const locale of ["en", "pt"] as const) {
+      // O trecho não quebra linha (o traço não se parte); longo, abriria rolagem no celular.
+      if (mark[locale].length > 32) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["valuePropMark", locale],
+          message: "valuePropMark tem no máximo 32 caracteres",
+        });
+      }
+      if (!profile.valueProp[locale].includes(mark[locale])) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["valuePropMark", locale],
+          message: "valuePropMark precisa ser um trecho da valueProp do mesmo idioma",
+        });
+      }
+    }
+  });
 
 export const experienceSchema = z.object({
   company: z.string().min(1),

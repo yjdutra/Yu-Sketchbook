@@ -1,0 +1,190 @@
+---
+// RF-12 / RF-13: capa, selos (estado e visibilidade), nome, tagline, até 5 tecnologias e as
+// ações. O link do GitHub só existe se o projeto é público (o schema garante o par, RN-02).
+import { Picture } from "astro:assets";
+import Icon from "@/components/icons/Icon.astro";
+import StatusBadge from "@/components/sections/StatusBadge.astro";
+import VisibilityBadge from "@/components/sections/VisibilityBadge.astro";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+import type { Project } from "@/lib/content";
+
+interface Props {
+  locale: Locale;
+  project: Project;
+}
+
+const { locale, project } = Astro.props;
+const data = project.data;
+const href = localizePath(`/projects/${project.id}/`, locale);
+const titleId = `project-${project.id}-title`;
+---
+
+<article class="project" aria-labelledby={titleId}>
+  {/*
+    A capa repete o link do título: fora do Tab (um destino, uma parada), mas com o alt do
+    conteúdo, porque a imagem prova o que o projeto faz (RF-12) e o leitor de tela também a lê.
+  */}
+  <a class="project__cover" href={href} tabindex="-1">
+    <Picture
+      src={data.cover}
+      alt={data.coverAlt[locale]}
+      formats={["avif", "webp"]}
+      fallbackFormat="webp"
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 1024px) 560px, (min-width: 768px) 55vw, 100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+  <div class="project__body">
+    {data.draft && <p class="project__draft" role="status">{t("draft.banner", locale)}</p>}
+    <div class="project__pills">
+      <StatusBadge locale={locale} status={data.status} />
+      <VisibilityBadge locale={locale} visibility={data.visibility} />
+    </div>
+    <h3 id={titleId} class="project__title"><a href={href}>{data.name}</a></h3>
+    <p class="project__tagline">{data.tagline[locale]}</p>
+    <ul class="project__stack" aria-label={t("project.stack", locale)}>
+      {data.stack.slice(0, 5).map((tech) => <li>{tech}</li>)}
+    </ul>
+    <div class="project__actions">
+      <a href={href}>
+        {t("project.readMore", locale)}
+        <Icon name="arrow" size={16} />
+      </a>
+      {
+        data.visibility === "public" && data.repo && (
+          <a href={data.repo} target="_blank" rel="noopener">
+            {t("project.viewCode", locale)}
+            <Icon name="external" size={16} />
+            <span class="sr-only">{t("a11y.newTab", locale)}</span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .project {
+    display: grid;
+    gap: var(--space-6);
+    overflow: hidden;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-card);
+  }
+
+  .project__cover {
+    display: block;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--surface-sunken);
+  }
+
+  .project__cover :global(picture),
+  .project__cover :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: left top;
+  }
+
+  .project__body {
+    min-width: 0;
+    padding: 0 clamp(1.25rem, 3.5vw, 2rem) clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .project__draft {
+    margin: 0 0 var(--space-3);
+    color: var(--status-development);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 400;
+  }
+
+  .project__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4);
+  }
+
+  .project__title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--step-3);
+    line-height: 1.1;
+  }
+
+  .project__title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .project__title a:hover {
+    text-decoration: underline;
+  }
+
+  .project__tagline {
+    margin: 0 0 var(--space-4);
+    color: var(--ink-muted);
+  }
+
+  .project__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  .project__stack li {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .project__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .project__actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .project {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .project__cover {
+      height: 100%;
+      border-right: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .project__cover :global(picture),
+    .project__cover :global(img) {
+      height: 100%;
+    }
+
+    .project__body {
+      padding: clamp(1.25rem, 3.5vw, 2rem) clamp(1.25rem, 3.5vw, 2rem) clamp(1.25rem, 3.5vw, 2rem)
+        0;
+    }
+  }
+</style>

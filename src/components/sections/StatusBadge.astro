@@ -1,0 +1,47 @@
+---
+// RF-12: estado do projeto. Nunca só por cor (RNF-03): cor + forma do ícone + texto.
+import Icon from "@/components/icons/Icon.astro";
+import { t, type Locale } from "@/i18n/utils";
+import type { Project } from "@/lib/content";
+
+interface Props {
+  locale: Locale;
+  status: Project["data"]["status"];
+}
+
+const { locale, status } = Astro.props;
+---
+
+<span class:list={["pill", `pill--${status}`]}>
+  <Icon name={`status-${status}`} size={12} />
+  {t(`project.status.${status}`, locale)}
+</span>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 2px 10px 2px 8px;
+    border: 1.5px solid currentColor;
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-raised);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .pill--production {
+    color: var(--status-production);
+  }
+
+  .pill--development {
+    color: var(--status-development);
+  }
+
+  .pill--archived {
+    color: var(--status-archived);
+  }
+</style>

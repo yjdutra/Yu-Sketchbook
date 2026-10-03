@@ -5,7 +5,7 @@
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    "jsxImportSource": "preact",
     "paths": {
       "@/*": ["./src/*"]
     }

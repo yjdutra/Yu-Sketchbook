@@ -1,0 +1,117 @@
+---
+// RF-16: experiências da mais recente para a mais antiga (a ordem vem do getJourney()) e, por
+// último, a formação.
+import TimelineItem from "@/components/sections/TimelineItem.astro";
+import { t, type Locale } from "@/i18n/utils";
+import type { JourneyItem, Profile } from "@/lib/content";
+import { formatPeriod } from "@/lib/dates";
+
+interface Props {
+  locale: Locale;
+  journey: JourneyItem[];
+  education: Profile["data"]["education"];
+  impactIds: ReadonlySet<string>;
+}
+
+const { locale, journey, education, impactIds } = Astro.props;
+const present = t("experience.present", locale);
+---
+
+<ol class="timeline">
+  {
+    journey.map(({ experience, achievements }) => (
+      <TimelineItem
+        locale={locale}
+        experience={experience}
+        achievements={achievements}
+        impactIds={impactIds}
+      />
+    ))
+  }
+</ol>
+
+{
+  education.length > 0 && (
+    <div class="education">
+      <h3 class="education__title">{t("journey.education", locale)}</h3>
+      <ul class="education__list">
+        {education.map((item) => (
+          <li>
+            <p class="education__period margin-note">
+              {formatPeriod(item.start, item.end, locale, present)}
+            </p>
+            <p class="education__degree">
+              <strong>{item.degree[locale]}</strong> · {item.institution}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+<style>
+  .timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .education {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .education__title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--step-2);
+  }
+
+  .education__list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .education__list li {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .education__period,
+  .education__degree {
+    margin: 0;
+  }
+
+  .education__period {
+    color: var(--ink-subtle);
+  }
+
+  .education__degree {
+    color: var(--ink-muted);
+  }
+
+  .education__degree strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Mesmo padrão da experiência (TimelineItem.astro): o período vai para a coluna de margem. */
+  @media (min-width: 1024px) {
+    .education__list li {
+      position: relative;
+    }
+
+    .education__period {
+      position: absolute;
+      top: 0;
+      right: calc(100% + 2.5rem);
+      width: 9rem;
+      padding-top: 0.2em;
+      text-align: right;
+    }
+  }
+</style>

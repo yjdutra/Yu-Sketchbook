@@ -7,6 +7,30 @@ headline:
 valueProp:
   en: "I build apps and AI systems that work in real life, not just demos."
   pt: "Crio apps e sistemas de IA que funcionam de verdade, não só no slide."
+# O trecho com o traço de caneta no Hero: a promessa. Precisa ser literal da valueProp (o schema
+# confere) e ter até 32 caracteres.
+valuePropMark:
+  en: "work in real life"
+  pt: "funcionam de verdade"
+# Nota "At a glance" do Hero. Cada fato vem do resumo ou dos key achievements do Profile.pdf
+# (RN-06): 5 anos, 10.000+ aparelhos, −70% do CRM próprio, o último ano em IA aplicada.
+glance:
+  - value: { en: "5 years", pt: "5 anos" }
+    label:
+      en: "building apps for smart homes and buildings"
+      pt: "criando apps para casas e prédios inteligentes"
+  - value: { en: "10,000+", pt: "10.000+" }
+    label:
+      en: "devices connected in the field"
+      pt: "aparelhos conectados em campo"
+  - value: "−70%"
+    label:
+      en: "in sales tool costs, with a CRM I built"
+      pt: "no custo com ferramentas de vendas, com um CRM que criei"
+  - value: { en: "Applied AI", pt: "IA aplicada" }
+    label:
+      en: "my focus for the past year"
+      pt: "meu foco no último ano"
 summary:
   en: >-
     For 5 years I've built home and building automation apps: panels with 1 GB of RAM, apps that

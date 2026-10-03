@@ -12,24 +12,32 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "cv": "astro build && tsx scripts/cv.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "budget": "tsx tests/budget.ts",
+    "lhci": "tsx tests/lhci.ts"
   },
   "dependencies": {
-    "@astrojs/react": "^7.0.0",
+    "@astrojs/preact": "^6.0.5",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/source-serif-4": "^5.3.0",
     "@fontsource/dm-mono": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.5",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
+    "preact": "^10.29.8",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "typescript": "^6.0.3"
+    "@axe-core/playwright": "^4.13.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3",
+    "yaml": "^2.9.1"
   }
 }

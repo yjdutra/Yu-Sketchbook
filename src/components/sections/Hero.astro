@@ -1,0 +1,176 @@
+---
+// RF-08: nome, papel, proposta de valor em linguagem leiga, localização e três CTAs (Projetos,
+// CV, Contato). Sem foto (decisão do Yuri, 2026-10-03): o h1 é a LCP.
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import Scribble from "@/components/ui/Scribble.astro";
+import { SECTION_IDS } from "@/i18n/ui";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+import type { Profile } from "@/lib/content";
+import { splitEmphasis } from "@/lib/emphasis";
+import { resolveLocalizable } from "@/lib/localizable";
+
+interface Props {
+  locale: Locale;
+  profile: Profile;
+}
+
+const { locale, profile } = Astro.props;
+const me = profile.data;
+const pitch = splitEmphasis(me.valueProp[locale], me.valuePropMark?.[locale]);
+const home = localizePath("/", locale);
+---
+
+<section class="hero" aria-labelledby="hero-name">
+  <div class="hero__grid">
+    <div class="hero__main">
+      <h1 id="hero-name" class="hero__name">{me.name}</h1>
+      <p class="hero__role">{me.headline[locale]}</p>
+      <p class="hero__pitch">
+        {pitch.before}<span class="hero__mark">{pitch.mark}<Scribble kind="under" /></span>{
+          pitch.after
+        }
+      </p>
+      <p class="hero__location margin-note">{me.location[locale]}</p>
+      <div class="hero__ctas">
+        <ButtonLink
+          href={`${home}#${SECTION_IDS.projects}`}
+          locale={locale}
+          icon="arrow"
+          class="hero__cta-primary"
+        >
+          {t("cta.seeProjects", locale)}
+        </ButtonLink>
+        <ButtonLink
+          href={me.cv[locale]}
+          locale={locale}
+          variant="secondary"
+          icon="download"
+          download
+          class="hero__cta-secondary"
+        >
+          {t("cta.downloadCv", locale)}
+        </ButtonLink>
+        <ButtonLink href={`${home}#${SECTION_IDS.contact}`} locale={locale} variant="ghost">
+          {t("cta.contact", locale)}
+        </ButtonLink>
+      </div>
+    </div>
+
+    {
+      me.glance.length > 0 && (
+        <aside class="hero__glance" aria-labelledby="hero-glance">
+          <p id="hero-glance" class="hero__glance-title">
+            {t("hero.glance", locale)}
+          </p>
+          <ul class="margin-note">
+            {me.glance.map((fact) => (
+              <li>
+                <b>{resolveLocalizable(fact.value, locale)}</b> {fact.label[locale]}
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: calc(var(--bar-h) + clamp(2.5rem, 7vw, 6rem)) clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: var(--space-7);
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .hero__main {
+    min-width: 0;
+  }
+
+  .hero__name {
+    margin: 0 0 var(--space-3);
+    font-size: var(--step-5);
+    line-height: 1.02;
+  }
+
+  .hero__role {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-muted);
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .hero__pitch {
+    max-width: 13.8em;
+    margin: 0 0 var(--space-5);
+    font-size: var(--step-3);
+    line-height: 1.22;
+  }
+
+  /* O trecho com o traço não quebra, para o sublinhado não se partir em duas linhas. */
+  .hero__mark {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .hero__location {
+    margin: 0 0 var(--space-7);
+  }
+
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* < 520 px: o primário ocupa a linha; CV e Contato dividem a de baixo. */
+  @media (max-width: 519px) {
+    .hero__ctas :global(.hero__cta-primary) {
+      flex: 1 1 100%;
+    }
+
+    .hero__ctas :global(.hero__cta-secondary) {
+      flex: 1 1 0;
+    }
+  }
+
+  .hero__glance {
+    padding-left: var(--space-5);
+    border-left: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .hero__glance-title {
+    margin: 0 0 var(--space-3);
+    color: var(--accent-text);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .hero__glance ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__glance b {
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+      align-items: end;
+      gap: var(--space-9);
+    }
+  }
+</style>

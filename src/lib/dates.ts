@@ -22,3 +22,10 @@ export function formatPeriod(
   const to = end ? formatMonthYear(end, locale) : openEnd;
   return `${formatMonthYear(start, locale)} – ${to}`;
 }
+
+// Data de emissão de credencial ("Aug 21, 2026" / "21 de ago. de 2026"). Mesmo motivo do UTC fixo.
+export function formatDate(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(HTML_LANG[locale], { dateStyle: "medium", timeZone: "UTC" }).format(
+    date,
+  );
+}

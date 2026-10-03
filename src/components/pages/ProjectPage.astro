@@ -1,8 +1,14 @@
 ---
 // Página de projeto compartilhada por /projects/<slug> e /pt/projects/<slug> (RF-03).
-// Esqueleto da Fase 0: capa, problema e o que faz. A página completa (RF-14) é da Etapa 2.
-import { Image } from "astro:assets";
+// RF-14: problema, o que faz, galeria com alt e legenda, destaques em linguagem leiga, stack e os
+// links de repositório e de demo quando existem.
+import { Picture } from "astro:assets";
+import Icon from "@/components/icons/Icon.astro";
+import StatusBadge from "@/components/sections/StatusBadge.astro";
+import VisibilityBadge from "@/components/sections/VisibilityBadge.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SECTION_IDS } from "@/i18n/ui";
 import { localizePath, t, type Locale } from "@/i18n/utils";
 import { getProfile, type Project } from "@/lib/content";
 
@@ -14,21 +20,305 @@ interface Props {
 const { locale, project } = Astro.props;
 const profile = await getProfile();
 const data = project.data;
+const back = `${localizePath("/", locale)}#${SECTION_IDS.projects}`;
 ---
 
 <BaseLayout
   title={`${data.name} · ${profile.data.name}`}
   description={data.tagline[locale]}
   locale={locale}
+  ogType="article"
 >
-  {/* RN-03: em `pnpm dev` o draft aparece para revisão, sempre marcado. */}
-  {data.draft && <p role="status">{t("draft.banner", locale)}</p>}
-  <article>
-    <h1>{data.name}</h1>
-    <p>{data.tagline[locale]}</p>
-    <Image src={data.cover} alt={data.coverAlt[locale]} widths={[640, 1280]} sizes="100vw" />
-    <p>{data.problem[locale]}</p>
-    <p>{data.whatItDoes[locale]}</p>
+  <article class="page">
+    <a class="page__back margin-note" href={back}>
+      <Icon name="arrow" size={16} class="page__back-icon" />
+      {t("project.backHome", locale)}
+    </a>
+
+    {/* RN-03: em `pnpm dev` o draft aparece para revisão, sempre marcado. */}
+    {data.draft && <p class="page__draft" role="status">{t("draft.banner", locale)}</p>}
+
+    <header class="page__head">
+      <div class="page__pills">
+        <StatusBadge locale={locale} status={data.status} />
+        <VisibilityBadge locale={locale} visibility={data.visibility} />
+      </div>
+      <h1 class="page__title">{data.name}</h1>
+      <p class="page__tagline">{data.tagline[locale]}</p>
+      {
+        (data.repo || data.liveUrl) && (
+          <div class="page__actions">
+            {data.liveUrl && (
+              <ButtonLink href={data.liveUrl} locale={locale} external>
+                {t("project.openLive", locale)}
+              </ButtonLink>
+            )}
+            {data.visibility === "public" && data.repo && (
+              <ButtonLink
+                href={data.repo}
+                locale={locale}
+                variant={data.liveUrl ? "secondary" : "primary"}
+                external
+              >
+                {t("project.viewCode", locale)}
+              </ButtonLink>
+            )}
+          </div>
+        )
+      }
+    </header>
+
+    {/* RNF-01: a capa é a LCP desta página. Só ela é eager e de prioridade alta; a galeria é lazy. */}
+    <figure class="page__cover">
+      <Picture
+        src={data.cover}
+        alt={data.coverAlt[locale]}
+        formats={["avif", "webp"]}
+        fallbackFormat="webp"
+        widths={[640, 960, 1280, 1600]}
+        sizes="(min-width: 1152px) 1072px, calc(100vw - 2 * clamp(1rem, 4.5vw, 2.5rem))"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="page__text">
+      <section aria-labelledby="problem-title">
+        <h2 id="problem-title">{t("project.problem", locale)}</h2>
+        <p>{data.problem[locale]}</p>
+      </section>
+
+      <section aria-labelledby="what-title">
+        <h2 id="what-title">{t("project.whatItDoes", locale)}</h2>
+        <p>{data.whatItDoes[locale]}</p>
+      </section>
+    </div>
+
+    <section class="page__block" aria-labelledby="highlights-title">
+      <h2 id="highlights-title">{t("project.highlights", locale)}</h2>
+      <ul class="highlights">
+        {
+          data.highlights.map((highlight) => (
+            <li class="highlight">
+              <h3>{highlight.title[locale]}</h3>
+              <p>{highlight.body[locale]}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      data.gallery.length > 0 && (
+        <section class="page__block" aria-labelledby="gallery-title">
+          <h2 id="gallery-title">{t("project.gallery", locale)}</h2>
+          <div class="gallery">
+            {data.gallery.map((shot) => (
+              <figure class="shot">
+                <Picture
+                  src={shot.image}
+                  alt={shot.alt[locale]}
+                  formats={["avif", "webp"]}
+                  fallbackFormat="webp"
+                  widths={[640, 960, 1280]}
+                  sizes="(min-width: 1152px) 528px, (min-width: 1024px) 45vw, calc(100vw - 2 * clamp(1rem, 4.5vw, 2.5rem))"
+                  loading="lazy"
+                  decoding="async"
+                />
+                {shot.caption && (
+                  <figcaption>{shot.caption[locale]}</figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="page__block" aria-labelledby="stack-title">
+      <h2 id="stack-title">{t("project.stack", locale)}</h2>
+      <ul class="stack">
+        {data.stack.map((tech) => <li>{tech}</li>)}
+      </ul>
+    </section>
   </article>
-  <p><a href={localizePath("/", locale)}>{t("project.backHome", locale)}</a></p>
 </BaseLayout>
+
+<style>
+  .page {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: calc(var(--bar-h) + clamp(1.5rem, 5vw, 3.5rem)) var(--page-gutter)
+      clamp(3rem, 7vw, 6rem);
+  }
+
+  .page__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    margin-bottom: var(--space-5);
+    color: var(--accent-text);
+  }
+
+  .page__back :global(.page__back-icon) {
+    transform: scaleX(-1);
+  }
+
+  .page__draft {
+    margin: 0 0 var(--space-4);
+    color: var(--status-development);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 400;
+  }
+
+  .page__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .page__title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--step-5);
+    line-height: 1.02;
+  }
+
+  .page__tagline {
+    max-width: 21.2em;
+    margin: 0 0 var(--space-6);
+    color: var(--ink-muted);
+    font-size: var(--step-1);
+    line-height: 1.4;
+  }
+
+  .page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .page__cover {
+    margin: var(--space-8) 0 var(--space-9);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-sunken);
+    box-shadow: var(--shadow-card);
+  }
+
+  .page__cover :global(picture),
+  .page__cover :global(img),
+  .shot :global(picture),
+  .shot :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .page__text {
+    display: grid;
+    gap: var(--space-7);
+    max-width: var(--measure);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-3);
+    font-size: var(--step-3);
+  }
+
+  .page__text p {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+
+  .page__block {
+    margin-top: var(--space-10);
+  }
+
+  .highlights {
+    display: grid;
+    gap: var(--space-5);
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .highlight {
+    min-width: 0;
+    padding: clamp(1.25rem, 3.5vw, 1.75rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-card);
+  }
+
+  .highlight h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+
+  .highlight p {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--space-8);
+    margin-top: var(--space-5);
+  }
+
+  .shot {
+    margin: 0;
+  }
+
+  .shot :global(img) {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-sunken);
+  }
+
+  /* Legenda é frase para ler, não nota de margem: serifa (decisão do ui-ux, Etapa 2). */
+  .shot figcaption {
+    margin-top: var(--space-2);
+    color: var(--ink-muted);
+    font-size: var(--step--1);
+    line-height: 1.45;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack li {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  @media (min-width: 768px) {
+    .highlights {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8) var(--space-6);
+    }
+  }
+</style>

@@ -1,6 +1,9 @@
 ---
 // 404 compartilhada por /404.html e a versão PT (RF-05). O Caddy escolhe qual servir pelo
-// prefixo do caminho.
+// prefixo do caminho. A troca de idioma leva à home do outro idioma: a 404 não tem "a mesma
+// página" do outro lado.
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import Scribble from "@/components/ui/Scribble.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { localizePath, t, type Locale } from "@/i18n/utils";
 
@@ -15,9 +18,55 @@ const { locale } = Astro.props;
   title={t("notFound.title", locale)}
   description={t("notFound.body", locale)}
   locale={locale}
+  languagePath="/"
+  backToTop={false}
   noindex
 >
-  <h1>{t("notFound.title", locale)}</h1>
-  <p>{t("notFound.body", locale)}</p>
-  <p><a href={localizePath("/", locale)}>{t("notFound.backHome", locale)}</a></p>
+  <div class="lost">
+    <p class="lost__code" aria-hidden="true">
+      <span class="lost__mark">404<Scribble kind="strike" /></span>
+    </p>
+    <h1 class="lost__title">{t("notFound.title", locale)}</h1>
+    <p class="lost__body">{t("notFound.body", locale)}</p>
+    <ButtonLink href={localizePath("/", locale)} locale={locale} icon="arrow">
+      {t("notFound.backHome", locale)}
+    </ButtonLink>
+  </div>
 </BaseLayout>
+
+<style>
+  .lost {
+    max-width: var(--page-max);
+    min-height: 70vh;
+    margin-inline: auto;
+    padding: calc(var(--bar-h) + clamp(2.5rem, 7vw, 6rem)) var(--page-gutter)
+      clamp(3rem, 7vw, 6rem);
+  }
+
+  .lost__code {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--step-metric);
+    line-height: 1;
+  }
+
+  .lost__mark {
+    position: relative;
+    display: inline-block;
+  }
+
+  .lost__title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--step-5);
+    line-height: 1.02;
+  }
+
+  .lost__body {
+    max-width: 27.6em;
+    margin: 0 0 var(--space-7);
+    color: var(--ink-muted);
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+</style>

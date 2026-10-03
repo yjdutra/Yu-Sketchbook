@@ -1,0 +1,157 @@
+---
+// RF-16 / RF-17: uma experiência (período, empresa · cargo, local, resumo) e os achievements dela.
+// Os que estão em Impacto viram link de âncora curto, sem repetir o texto; os demais (sem
+// número, RF-11) aparecem por extenso aqui, que é o único lugar onde existem.
+import Icon from "@/components/icons/Icon.astro";
+import { t, type Locale } from "@/i18n/utils";
+import type { Achievement, Experience } from "@/lib/content";
+import { formatPeriod } from "@/lib/dates";
+
+interface Props {
+  locale: Locale;
+  experience: Experience;
+  achievements: Achievement[];
+  // Ids dos achievements que têm cartão em Impacto nesta página.
+  impactIds: ReadonlySet<string>;
+}
+
+const { locale, experience, achievements, impactIds } = Astro.props;
+const data = experience.data;
+const period = formatPeriod(data.start, data.end, locale, t("experience.present", locale));
+const linked = achievements.filter((achievement) => impactIds.has(achievement.id));
+const written = achievements.filter((achievement) => !impactIds.has(achievement.id));
+---
+
+<li class="item">
+  <p class="item__period margin-note">{period}</p>
+  <div class="item__body">
+    {/* nbsp: o "·" fica com a empresa e nunca abre a linha seguinte. */}
+    <h3 class="item__title">{data.company}&nbsp;· {data.role[locale]}</h3>
+    <p class="item__location margin-note">{data.location}</p>
+    <p class="item__summary">{data.summary[locale]}</p>
+    {
+      achievements.length > 0 && (
+        <>
+          <p class="item__results-title margin-note">{t("journey.results", locale)}</p>
+          <ul class="item__results">
+            {linked.map((achievement) => (
+              <li class="item__link">
+                <a href={`#achievement-${achievement.id}`}>
+                  <Icon name="arrow-up" size={16} />
+                  {achievement.data.title[locale]}
+                  <span class="sr-only">{t("journey.impactLink", locale)}</span>
+                </a>
+              </li>
+            ))}
+            {written.map((achievement) => (
+              <li class="item__written">
+                <strong>{achievement.data.title[locale]}.</strong> {achievement.data.action[locale]}{" "}
+                {achievement.data.result[locale]}
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </div>
+</li>
+
+<style>
+  .item {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-6);
+    border-top: 1px dashed var(--border-strong);
+  }
+
+  .item:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .item__period {
+    margin: 0;
+    color: var(--ink-subtle);
+  }
+
+  .item__body {
+    min-width: 0;
+  }
+
+  .item__title {
+    margin: 0 0 var(--space-1);
+    font-size: var(--step-2);
+    line-height: 1.25;
+  }
+
+  .item__location {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-subtle);
+  }
+
+  .item__summary {
+    max-width: var(--measure);
+    margin: 0 0 var(--space-4);
+    color: var(--ink-muted);
+  }
+
+  .item__results-title {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-subtle);
+  }
+
+  .item__results {
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--measure);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Título longo quebra em duas linhas: a seta fica na primeira, não no meio do bloco. */
+  .item__link a {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    min-height: 44px;
+    font-weight: 600;
+  }
+
+  .item__link :global(.icon) {
+    flex: none;
+    margin-top: 0.3em;
+  }
+
+  .item__written {
+    padding-left: var(--space-4);
+    border-left: 1.5px solid var(--border);
+    color: var(--ink-muted);
+  }
+
+  .item__written strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* A partir de lg o período vai para a coluna de margem da seção (Section.astro: 9rem + 2.5rem
+     de gap), à esquerda da linha do caderno, como o número da seção. */
+  @media (min-width: 1024px) {
+    .item {
+      position: relative;
+    }
+
+    .item__period {
+      position: absolute;
+      top: var(--space-6);
+      right: calc(100% + 2.5rem);
+      width: 9rem;
+      padding-top: 0.35em;
+      text-align: right;
+    }
+
+    .item:first-child .item__period {
+      top: 0;
+    }
+  }
+</style>

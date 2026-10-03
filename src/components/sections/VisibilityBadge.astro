@@ -1,0 +1,37 @@
+---
+// RF-13 / RN-02: público mostra que o código está no GitHub; restrito mostra o cadeado e o texto.
+// É selo, não link: o link do repositório é uma ação separada no cartão.
+import Icon from "@/components/icons/Icon.astro";
+import { t, type Locale } from "@/i18n/utils";
+import type { Project } from "@/lib/content";
+
+interface Props {
+  locale: Locale;
+  visibility: Project["data"]["visibility"];
+}
+
+const { locale, visibility } = Astro.props;
+---
+
+<span class="pill">
+  <Icon name={visibility === "public" ? "code" : "lock"} size={16} />
+  {t(`project.visibility.${visibility}`, locale)}
+</span>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    max-width: 100%;
+    padding: 2px 10px 2px 8px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-raised);
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    line-height: 1.2;
+  }
+</style>

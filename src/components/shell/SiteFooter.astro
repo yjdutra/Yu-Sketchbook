@@ -1,0 +1,60 @@
+---
+// Rodapé curto. `data-spy-end` avisa o scroll-spy (SiteHeader) que a página chegou ao fim.
+import Icon from "@/components/icons/Icon.astro";
+import { t, type Locale } from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+  name: string;
+  // Página curta (404) não precisa de "voltar ao topo": o topo está à vista.
+  backToTop?: boolean;
+}
+
+const { locale, name, backToTop = true } = Astro.props;
+// O ano do build: o site é estático e é rebuildado a cada conteúdo novo.
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="foot" data-spy-end>
+  <div class="foot__inner">
+    <p class="margin-note">© {year} {name}</p>
+    {
+      backToTop && (
+        <a class="foot__top margin-note" href="#main">
+          {t("footer.backToTop", locale)}
+          <Icon name="arrow-up" size={16} />
+        </a>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .foot {
+    border-top: 1px solid var(--border);
+  }
+
+  .foot__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: var(--space-7) var(--page-gutter);
+  }
+
+  .foot p {
+    margin: 0;
+    color: var(--ink-subtle);
+  }
+
+  .foot__top {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 44px;
+    color: var(--accent-text);
+  }
+</style>

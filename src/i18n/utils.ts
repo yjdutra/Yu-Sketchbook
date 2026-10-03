@@ -23,6 +23,15 @@ export function t(key: UiKey, locale: Locale): string {
   return ui[key][locale];
 }
 
+// String com lacunas ("From {before} to {after}"). Lacuna sem valor fica como está, para o erro
+// aparecer na tela em vez de virar "undefined".
+export function tf(key: UiKey, locale: Locale, values: Record<string, string | number>): string {
+  return t(key, locale).replace(/\{(\w+)\}/g, (slot, name: string) => {
+    const value = values[name];
+    return value === undefined ? slot : String(value);
+  });
+}
+
 // Separa "/projects/x/?a=1#y" em caminho e sufixo, para mexer só no caminho.
 function splitPath(path: string): { pathname: string; suffix: string } {
   const cut = path.search(/[?#]/);

@@ -1,0 +1,20 @@
+---
+// RF-07 / CA-04: precisa rodar antes da primeira pintura, então é inline e bloqueante (o único,
+// RNF-02). Não mova para módulo nem para React: módulo é adiado e o flash do tema errado volta.
+// O conteúdo entra na CSP por hash (scripts/csp.mjs lê dist/); qualquer byte mudado muda o hash.
+// Mora num componente próprio para o BaseLayout poder omiti-lo no /cv sem embrulhar o <script>
+// numa expressão (onde as chaves do JS seriam lidas como expressão do Astro).
+---
+
+<script is:inline>
+  (function () {
+    var theme = null;
+    try {
+      theme = localStorage.getItem("theme");
+    } catch (e) {}
+    if (theme !== "light" && theme !== "dark") {
+      theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>

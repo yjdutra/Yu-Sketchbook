@@ -1,5 +1,5 @@
 // @ts-check
-import react from "@astrojs/react";
+import preact from "@astrojs/preact";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -18,6 +18,10 @@ export default defineConfig({
   trailingSlash: "always",
   build: {
     format: "directory",
+    // RNF-01: o CSS inteiro tem ~9 KB gz e dois <link> bloqueantes custavam ~450 ms de render delay
+    // na LCP (Lighthouse mobile). Inline, a primeira pintura não espera outra ida ao servidor. A
+    // CSP já aceita style inline (scripts/csp.mjs).
+    inlineStylesheets: "always",
   },
   i18n: {
     defaultLocale: "en",
@@ -27,7 +31,10 @@ export default defineConfig({
     },
   },
   integrations: [
-    react(),
+    // Ilhas em Preact (decisão do Yuri, 2026-10-03): o React 19 sozinho custava 68 KB gz, acima do
+    // teto de 60 KB das ilhas (RNF-02). `compat` deixa um import de "react" funcionar se um dia
+    // aparecer; a ilha atual importa direto de "preact" e não paga o compat.
+    preact({ compat: true }),
     sitemap({
       filter: (page) => !SITEMAP_EXCLUDED.some((pattern) => pattern.test(new URL(page).pathname)),
       i18n: {

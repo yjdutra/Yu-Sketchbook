@@ -6,6 +6,13 @@
    Por que o eixo "wght" e não o "opsz": o arquivo com tamanho óptico tem 122 KB, e o só de peso
    tem 51 KB. A diferença aparece só nos títulos gigantes, e o LCP é o título (RNF-01).
 
+   DM Mono só no peso 400 (2026-10-03): cada woff2 que o Hero pede antes da primeira pintura
+   custa ~150 ms de LCP no Lighthouse mobile simulado. Sem o 500, a home caiu de 1503 para
+   1352 ms (limite 1500). Onde o CSS pede 500 em mono, a face 400 é usada (500 não sintetiza
+   negrito); o destaque vem da cor (--ink sobre --ink-muted). Não volte o 500 sem remedir.
+   Preload do woff2 da serif também foi medido e piora: a primeira pintura adianta, mas a LCP
+   passa a ser a repintura com a fonte web (1352 → 1500 ms). Sem preload.
+
    Atenção: a seta "→" (U+2192) não está no subset latin de nenhuma das duas famílias e cai na
    fonte do sistema. Onde a seta importa (a métrica "antes → depois"), use o SVG de seta. */
 
@@ -32,13 +39,114 @@
     U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+
+/* ---------- Fallbacks com métrica ajustada (CLS, RNF-01) ----------
+   Com font-display: swap o texto pinta primeiro na fonte do sistema e troca quando o woff2
+   chega. A Source Serif 4 é ~16% mais larga que a Times: a troca re-quebrava as linhas do Hero
+   e empurrava o "At a glance" (Lighthouse mobile em /: CLS 0,079, limite 0,05). Estas faces
+   locais imitam a largura e as métricas verticais da fonte web, então a troca quase não mexe
+   no layout.
+
+   Como os números saíram (2026-10-03, revisão da Etapa 2):
+   - size-adjust: largura do texto real da home (EN + PT, main inteiro; títulos para os pesos
+     de título) medida no Chromium com canvas.measureText, fonte web ÷ fonte local; depois
+     conferido contra o layout do Hero com o woff2 bloqueado × carregado, largura por largura.
+   - Larguras em ch mudam com a fonte (o "0" da Times ajustada é 9% mais largo que o da Source
+     Serif 4): limite de linha de texto em serifa vai em em (26ch = 13.8em, 68ch = 36em), senão
+     a troca muda quantas palavras cabem por linha, com fallback ajustado ou não. Times New
+     Roman, Liberation Serif e Tinos têm as mesmas larguras (métrica compatível), por isso uma
+     face só cobre Windows/macOS/iOS (Times New Roman) e Linux (Liberation/Tinos).
+   - ascent/descent/line-gap: hhea = typo da fonte web (Source Serif 4: 1036/335/0 em 1000 upm;
+     DM Mono: 992/310/0), divididos pelo size-adjust, porque o navegador também escala a
+     métrica sobrescrita.
+   - Pesos de título têm face própria: o negrito local é outra fonte, com outra largura. Os
+     cortes (549/674) separam corpo (400–500), títulos (600–650) e o h1 (700).
+   - Noto Serif é a serifa do Android, onde não há Times: família seguinte na pilha. Face local
+     ausente não baixa nada; o navegador só passa para a próxima família.
+   Para refazer: o script de medição está descrito na skill design-system-portfolio §3. */
+
 @font-face {
-  font-family: "DM Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url("@fontsource/dm-mono/files/dm-mono-latin-500-normal.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
-    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-family: "Source Serif Fallback Times";
+  font-weight: 200 549;
+  src: local("Times New Roman"), local("TimesNewRomanPSMT"), local("Liberation Serif"),
+    local("LiberationSerif"), local("Tinos"), local("Tinos-Regular");
+  /* A média do texto dá 116,35%, mas com ela a proposta de valor do Hero quebra numa linha a
+     mais em 375 px (EN). 115,5% é o valor que mantém o Hero idêntico ao da fonte web em todas
+     as larguras de iPhone e de desktop testadas (375, 390, 393, 414, 428, 430, 768–1440);
+     sobra só 320 px (abaixo do piso de 360) e 360 px em PT (largura de Android, onde vale a
+     face Noto abaixo). */
+  size-adjust: 115.5%;
+  ascent-override: 89.7%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif Fallback Times";
+  font-weight: 550 674;
+  src: local("Times New Roman Bold"), local("TimesNewRomanPS-BoldMT"),
+    local("Liberation Serif Bold"), local("LiberationSerif-Bold"), local("Tinos Bold"),
+    local("Tinos-Bold");
+  size-adjust: 110.99%;
+  ascent-override: 93.34%;
+  descent-override: 30.18%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif Fallback Times";
+  font-weight: 675 900;
+  src: local("Times New Roman Bold"), local("TimesNewRomanPS-BoldMT"),
+    local("Liberation Serif Bold"), local("LiberationSerif-Bold"), local("Tinos Bold"),
+    local("Tinos-Bold");
+  size-adjust: 112.32%;
+  ascent-override: 92.24%;
+  descent-override: 29.83%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif Fallback Noto";
+  font-weight: 200 549;
+  src: local("Noto Serif"), local("NotoSerif-Regular"), local("Noto Serif Regular");
+  size-adjust: 99.14%;
+  ascent-override: 104.5%;
+  descent-override: 33.79%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif Fallback Noto";
+  font-weight: 550 674;
+  src: local("Noto Serif Bold"), local("NotoSerif-Bold");
+  size-adjust: 95.09%;
+  ascent-override: 108.96%;
+  descent-override: 35.23%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Source Serif Fallback Noto";
+  font-weight: 675 900;
+  src: local("Noto Serif Bold"), local("NotoSerif-Bold");
+  size-adjust: 96.22%;
+  ascent-override: 107.67%;
+  descent-override: 34.82%;
+  line-gap-override: 0%;
+}
+
+/* DM Mono avança 0,6 em por caractere, como quase todo mono do sistema (Courier New, Menlo,
+   Liberation Mono, DejaVu Sans Mono, Droid Sans Mono): a largura já bate (medido: 100%).
+   Falta só a métrica vertical, que muda onde a linha de base cai. Uma face só serve aos dois
+   pesos (400 e 500 têm a mesma largura; 500 não sintetiza negrito). */
+@font-face {
+  font-family: "DM Mono Fallback";
+  src: local("Menlo"), local("Menlo-Regular"), local("Courier New"), local("CourierNewPSMT"),
+    local("Liberation Mono"), local("LiberationMono"), local("Cousine"), local("Cousine-Regular"),
+    local("DejaVu Sans Mono"), local("DejaVuSansMono"), local("Droid Sans Mono"),
+    local("DroidSansMono"), local("Noto Sans Mono"), local("NotoSansMono-Regular");
+  size-adjust: 100%;
+  ascent-override: 99.2%;
+  descent-override: 31%;
+  line-gap-override: 0%;
 }

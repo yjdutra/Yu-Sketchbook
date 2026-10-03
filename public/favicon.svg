@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .paper { fill: #fbf7ee; }
+    .ink { stroke: #2443b5; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #13161e; }
+      .ink { stroke: #93acff; }
+    }
+  </style>
+  <rect class="paper" width="64" height="64" rx="14"/>
+  <g class="ink" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="6.5" d="M17 14.5c4.6 5.8 9.4 11.6 15.2 18.4M47.5 13.5c-5.3 6.6-10.1 12.8-15.2 19.6-.4 6.8-.2 12.5.3 17.6"/>
+    <path stroke-width="3.4" d="M13 54c9.5-2.6 22-3.9 38.5-3.4"/>
+  </g>
+</svg>

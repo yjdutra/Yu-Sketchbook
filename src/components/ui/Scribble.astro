@@ -1,0 +1,33 @@
+---
+// O traço de caneta (skill design-system-portfolio §3, "Primitivas"): sublinha o número novo e
+// risca o valor antigo. Decorativo: a informação está no texto que ele envolve.
+interface Props {
+  kind: "under" | "strike";
+}
+
+const { kind } = Astro.props;
+---
+
+{
+  kind === "under" ? (
+    <svg
+      class="scribble scribble--under"
+      viewBox="0 0 300 14"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path pathLength="1" d="M3 9.5c38-5 79-6.5 121-4.6 43 2 87 3.4 126 .4 16-1.2 31-2.4 47-3.3" />
+    </svg>
+  ) : (
+    <svg
+      class="scribble scribble--strike"
+      viewBox="0 0 100 20"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path pathLength="1" d="M2 14c20-4 46-8 96-9" />
+    </svg>
+  )
+}

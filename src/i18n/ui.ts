@@ -41,16 +41,29 @@ export const ui = {
   "cta.github": { en: "See my GitHub", pt: "Ver meu GitHub" },
   "cta.downloadCv": { en: "Download CV", pt: "Baixar currículo" },
   "cta.seeProjects": { en: "See projects", pt: "Ver projetos" },
+  "cta.contact": { en: "Contact me", pt: "Fale comigo" },
+  // Nota ao lado do Hero (profile.glance).
+  "hero.glance": { en: "At a glance", pt: "Em resumo" },
+  // Dito por leitor de tela depois do texto de todo link que abre em nova aba (RF-09).
+  "a11y.newTab": { en: "(opens in a new tab)", pt: "(abre em nova aba)" },
 
   // Achievement: rótulos de problema → ação → resultado (skill voz-e-narrativa §3).
   "achievement.problem": { en: "Problem", pt: "Problema" },
   "achievement.action": { en: "What I did", pt: "O que fiz" },
   "achievement.result": { en: "Result", pt: "Resultado" },
+  // Leitura da métrica "antes → depois" (a seta é desenho, aria-hidden).
+  "metric.change": { en: "From {before} to {after}", pt: "De {before} para {after}" },
 
   // Trajetória: cargo sem `end` é o atual.
   "experience.present": { en: "Present", pt: "Atual" },
   // RF-16: título do bloco de formação, no fim da Trajetória.
   "journey.education": { en: "Education", pt: "Formação" },
+  "journey.results": { en: "Key results", pt: "Principais resultados" },
+  // RF-17: complemento só para leitor de tela do link que leva ao cartão em Impacto.
+  "journey.impactLink": {
+    en: "(details in the Impact section)",
+    pt: "(detalhes na seção Impacto)",
+  },
 
   // Projeto: status, visibilidade (RN-02) e títulos da página de projeto (RF-14).
   "project.status.production": { en: "In production", pt: "Em produção" },
@@ -74,6 +87,17 @@ export const ui = {
   "credential.verify": { en: "Verify", pt: "Verificar" },
   "credential.issued": { en: "Issued", pt: "Emitida em" },
   "credential.skills": { en: "What it covers", pt: "O que cobre" },
+  "credential.hint": {
+    en: "Open a badge to see what it covers and verify it.",
+    pt: "Abra um selo para ver o que ele cobre e verificá-lo.",
+  },
+  // Plural escolhido por Intl.PluralRules (Credentials.astro); en e pt só usam "one" e "other".
+  "credential.count.one": { en: "{count} badge", pt: "{count} selo" },
+  "credential.count.other": { en: "{count} badges", pt: "{count} selos" },
+  "credential.issuedBy": { en: "Issued by {issuer}", pt: "Emitidos por {issuer}" },
+  "credential.badgeAlt": { en: "{name} badge", pt: "Selo {name}" },
+  // RF-20: título da lista simples, abaixo do álbum.
+  "credential.others": { en: "Also completed", pt: "Também concluí" },
 
   // RF-21: meta description da home, 140–160 caracteres. Números do docs/Profile.pdf (RN-06).
   "meta.home.description": {
@@ -82,10 +106,26 @@ export const ui = {
   },
 
   "nav.label": { en: "Main", pt: "Principal" },
-  "theme.toggle": { en: "Toggle theme", pt: "Alternar tema" },
+  "nav.menu": { en: "Sections menu", pt: "Menu de seções" },
+  // O botão de tema diz a ação, não o estado (skill design-system-portfolio §5, "Casca").
+  "theme.toDark": { en: "Switch to dark theme", pt: "Mudar para o tema escuro" },
+  "theme.toLight": { en: "Switch to light theme", pt: "Mudar para o tema claro" },
   "language.label": { en: "Language", pt: "Idioma" },
   // Nome do idioma de destino, escrito nele mesmo (o leitor procura a própria língua).
   "language.name": { en: "English", pt: "Português" },
+  "language.code": { en: "EN", pt: "PT" },
+
+  "footer.backToTop": { en: "Back to top", pt: "Voltar ao topo" },
+
+  // Página do CV (/cv/), fonte do PDF. RN-07: sem telefone.
+  "cv.title": { en: "CV", pt: "Currículo" },
+  "cv.description": {
+    en: "Printable CV of Yuri J. Dutra, software and AI engineer.",
+    pt: "Currículo de Yuri J. Dutra, engenheiro de software e de IA, pronto para imprimir.",
+  },
+  "cv.profile": { en: "Profile", pt: "Perfil" },
+  "cv.experience": { en: "Experience", pt: "Experiência" },
+  "cv.portfolio": { en: "Portfolio", pt: "Portfólio" },
 
   "project.backHome": { en: "Back to home", pt: "Voltar para o início" },
   "draft.banner": {

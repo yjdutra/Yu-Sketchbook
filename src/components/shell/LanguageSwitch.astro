@@ -1,0 +1,73 @@
+---
+// RF-06: a mesma página no outro idioma, não a home. Segmento EN/PT de 2 células de 44 × 44.
+import { alternatePath, HTML_LANG, LOCALES, t, type Locale } from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+  // Caminho de referência. Padrão: a URL atual. A 404 passa "/" (a 404 do outro idioma não é
+  // "a mesma página").
+  path?: string;
+}
+
+const { locale, path = Astro.url.pathname } = Astro.props;
+---
+
+<div class="lang" role="group" aria-label={t("language.label", locale)}>
+  {
+    LOCALES.map((target) =>
+      target === locale ? (
+        <span class="lang__cell lang__cell--current" aria-current="true">
+          {t("language.code", target)}
+          <span class="sr-only">{t("language.name", target)}</span>
+        </span>
+      ) : (
+        <a
+          class="lang__cell"
+          href={alternatePath(path, target)}
+          hreflang={HTML_LANG[target]}
+          lang={HTML_LANG[target]}
+        >
+          {t("language.code", target)}
+          <span class="sr-only">{t("language.name", target)}</span>
+        </a>
+      ),
+    )
+  }
+</div>
+
+<style>
+  .lang {
+    display: inline-flex;
+    flex: none;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .lang__cell {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px; /* alvo de toque de 44 × 44 (a borda do segmento fica por fora) */
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+
+  a.lang__cell:hover {
+    background-color: var(--surface-sunken);
+    color: var(--ink);
+  }
+
+  /* O anel de foco não pode ser cortado pelo overflow do segmento. */
+  a.lang__cell:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .lang__cell--current {
+    background-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 400;
+  }
+</style>

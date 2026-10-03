@@ -1,18 +1,25 @@
 ---
 // Home compartilhada por / e /pt: a diferença entre idiomas é só o conteúdo (RF-06).
-// Esqueleto da Fase 0: a ordem e as âncoras das seções (RF-01) já valem; o visual é da Etapa 2.
+// RF-01: Hero, Impacto, Projetos, Trajetória, Certificações e Contato, nessa ordem, cada seção
+// com a âncora fixa de SECTION_IDS.
+import Contact from "@/components/sections/Contact.astro";
+import Credentials from "@/components/sections/Credentials.astro";
+import Hero from "@/components/sections/Hero.astro";
+import ImpactCard from "@/components/sections/ImpactCard.astro";
+import ProjectCard from "@/components/sections/ProjectCard.astro";
+import Section from "@/components/sections/Section.astro";
+import Timeline from "@/components/sections/Timeline.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { SECTION_IDS } from "@/i18n/ui";
-import { localizePath, t, type Locale } from "@/i18n/utils";
+import { t, type Locale } from "@/i18n/utils";
 import {
   getCredentials,
   getImpactAchievements,
   getJourney,
   getProfile,
   getPublishedProjects,
+  type Experience,
 } from "@/lib/content";
-import { formatPeriod } from "@/lib/dates";
-import { resolveLocalizable } from "@/lib/localizable";
 
 interface Props {
   locale: Locale;
@@ -27,107 +34,109 @@ const [profile, impact, projects, journey, credentials] = await Promise.all([
   getCredentials(),
 ]);
 const me = profile.data;
-const present = t("experience.present", locale);
+
+// A origem de cada cartão de Impacto (empresa · cargo · período). O getJourney() já garantiu que
+// toda referência existe (RN-04).
+const experiences = new Map<string, Experience>(
+  journey.map(({ experience }) => [experience.id, experience]),
+);
+const impactCards = impact.flatMap((achievement) => {
+  const experience = experiences.get(achievement.data.experience.id);
+  return experience ? [{ achievement, experience }] : [];
+});
+const impactIds = new Set(impactCards.map(({ achievement }) => achievement.id));
+
+// RF-22: JSON-LD Person. RN-07: sem telefone.
+const site = Astro.site;
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: me.name,
+  jobTitle: me.headline[locale],
+  email: `mailto:${me.email}`,
+  url: site ? new URL(Astro.url.pathname, site).href : undefined,
+  sameAs: [me.links.linkedin, me.links.github],
+};
 ---
 
 <BaseLayout
   title={`${me.name} · ${me.headline[locale]}`}
   description={t("meta.home.description", locale)}
   locale={locale}
+  ogType="profile"
 >
-  <header>
-    <h1>{me.name}</h1>
-    <p>{me.headline[locale]}</p>
-    <p>{me.valueProp[locale]}</p>
-    <p>{me.location[locale]}</p>
-  </header>
+  <script is:inline type="application/ld+json" slot="head" set:html={JSON.stringify(person)} />
 
-  <section id={SECTION_IDS.impact} aria-labelledby="impact-title">
-    <h2 id="impact-title">{t("section.impact", locale)}</h2>
-    <ul>
+  <Hero locale={locale} profile={profile} />
+
+  <Section
+    id={SECTION_IDS.impact}
+    index={1}
+    title={t("section.impact", locale)}
+    subtitle={t("section.impact.subtitle", locale)}
+  >
+    <div class="impact-grid">
       {
-        impact.map((achievement) => (
-          <li id={`achievement-${achievement.id}`}>
-            {achievement.data.metric && (
-              <strong>
-                {achievement.data.metric.before &&
-                  `${resolveLocalizable(achievement.data.metric.before, locale)} → `}
-                {resolveLocalizable(achievement.data.metric.after, locale)}
-              </strong>
-            )}
-            {achievement.data.title[locale]}
-          </li>
+        impactCards.map(({ achievement, experience }) => (
+          <ImpactCard locale={locale} achievement={achievement} experience={experience} />
         ))
       }
-    </ul>
-  </section>
+    </div>
+  </Section>
 
-  <section id={SECTION_IDS.projects} aria-labelledby="projects-title">
-    <h2 id="projects-title">{t("section.projects", locale)}</h2>
-    <ul>
-      {
-        projects.map((project) => (
-          <li>
-            <a href={localizePath(`/projects/${project.id}/`, locale)}>{project.data.name}</a>
-            <p>{project.data.tagline[locale]}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <Section
+    id={SECTION_IDS.projects}
+    index={2}
+    title={t("section.projects", locale)}
+    subtitle={t("section.projects.subtitle", locale)}
+  >
+    <div class="project-list">
+      {projects.map((project) => <ProjectCard locale={locale} project={project} />)}
+    </div>
+  </Section>
 
-  <section id={SECTION_IDS.journey} aria-labelledby="journey-title">
-    <h2 id="journey-title">{t("section.journey", locale)}</h2>
-    <ol>
-      {
-        journey.map(({ experience, achievements }) => (
-          <li>
-            <h3>
-              {experience.data.company} · {experience.data.role[locale]}
-            </h3>
-            <p>{formatPeriod(experience.data.start, experience.data.end, locale, present)}</p>
-            <p>{experience.data.summary[locale]}</p>
-            <ul>
-              {achievements.map((achievement) => (
-                <li>{achievement.data.title[locale]}</li>
-              ))}
-            </ul>
-          </li>
-        ))
-      }
-    </ol>
-    {
-      me.education.length > 0 && (
-        <>
-          <h3>{t("journey.education", locale)}</h3>
-          <ul>
-            {me.education.map((item) => (
-              <li>
-                {item.institution} · {item.degree[locale]} ·{" "}
-                {formatPeriod(item.start, item.end, locale, present)}
-              </li>
-            ))}
-          </ul>
-        </>
-      )
-    }
-  </section>
+  <Section
+    id={SECTION_IDS.journey}
+    index={3}
+    title={t("section.journey", locale)}
+    subtitle={t("section.journey.subtitle", locale)}
+  >
+    <Timeline locale={locale} journey={journey} education={me.education} impactIds={impactIds} />
+  </Section>
 
-  <section id={SECTION_IDS.credentials} aria-labelledby="credentials-title">
-    <h2 id="credentials-title">{t("section.credentials", locale)}</h2>
-    <ul>
-      {
-        [...credentials.album, ...credentials.list].map((credential) => (
-          <li>
-            {credential.data.name} · {credential.data.issuer}
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <Section
+    id={SECTION_IDS.credentials}
+    index={4}
+    title={t("section.credentials", locale)}
+    subtitle={t("section.credentials.subtitle", locale)}
+  >
+    <Credentials locale={locale} album={credentials.album} list={credentials.list} />
+  </Section>
 
-  <section id={SECTION_IDS.contact} aria-labelledby="contact-title">
-    <h2 id="contact-title">{t("section.contact", locale)}</h2>
-    <p><a href={`mailto:${me.email}`}>{me.email}</a></p>
-  </section>
+  <Section
+    id={SECTION_IDS.contact}
+    index={5}
+    title={t("section.contact", locale)}
+    subtitle={t("section.contact.subtitle", locale)}
+  >
+    <Contact locale={locale} profile={profile} />
+  </Section>
 </BaseLayout>
+
+<style>
+  .impact-grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .project-list {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .impact-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

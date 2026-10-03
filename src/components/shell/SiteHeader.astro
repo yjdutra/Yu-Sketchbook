@@ -1,0 +1,278 @@
+---
+// RF-02: barra fixa com as âncoras da home e o scroll-spy (aria-current na seção visível).
+// Abaixo de 768 px as âncoras vão para um <details>: abre por toque e teclado sem ilha nem
+// biblioteca, e o <script> abaixo só acrescenta Esc, clique fora e fechar ao escolher.
+import Icon from "@/components/icons/Icon.astro";
+import LanguageSwitch from "@/components/shell/LanguageSwitch.astro";
+import ThemeToggle from "@/components/shell/ThemeToggle.astro";
+import { SECTION_IDS } from "@/i18n/ui";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+  name: string;
+  // Repassado ao LanguageSwitch (a 404 troca para a home do outro idioma).
+  languagePath?: string;
+}
+
+const { locale, name, languagePath } = Astro.props;
+const home = localizePath("/", locale);
+const items = [
+  { id: SECTION_IDS.impact, label: t("section.impact", locale) },
+  { id: SECTION_IDS.projects, label: t("section.projects", locale) },
+  { id: SECTION_IDS.journey, label: t("section.journey", locale) },
+  { id: SECTION_IDS.credentials, label: t("section.credentials", locale) },
+  { id: SECTION_IDS.contact, label: t("section.contact", locale) },
+];
+---
+
+<header class="bar">
+  <div class="bar__inner">
+    <a class="bar__brand" href={home}>{name}</a>
+
+    <nav class="bar__nav" aria-label={t("nav.label", locale)}>
+      <ul>
+        {
+          items.map((item) => (
+            <li>
+              <a href={`${home}#${item.id}`} data-spy-link={item.id}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <LanguageSwitch locale={locale} path={languagePath} />
+    <ThemeToggle locale={locale} />
+
+    <details class="menu" data-menu>
+      <summary class="menu__button" aria-label={t("nav.menu", locale)}>
+        <Icon name="menu" />
+      </summary>
+      <nav class="menu__panel" aria-label={t("nav.label", locale)}>
+        <ul>
+          {
+            items.map((item) => (
+              <li>
+                <a href={`${home}#${item.id}`} data-spy-link={item.id}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Menu mobile: o <details> já abre e fecha por Enter/Espaço e toque. Aqui só o que ele não faz.
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>("[data-menu]")) {
+    const summary = menu.querySelector("summary");
+    const close = (refocus: boolean) => {
+      if (!menu.open) return;
+      menu.open = false;
+      if (refocus) summary?.focus();
+    };
+    menu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close(true);
+    });
+    for (const link of menu.querySelectorAll("a")) {
+      link.addEventListener("click", () => close(false));
+    }
+    document.addEventListener("click", (event) => {
+      if (event.target instanceof Node && !menu.contains(event.target)) close(false);
+    });
+    menu.addEventListener("focusout", (event) => {
+      if (event.relatedTarget instanceof Node && !menu.contains(event.relatedTarget)) close(false);
+    });
+  }
+
+  // Scroll-spy (RF-02, CA-01). A raiz do observer é uma faixa fina a 35% da altura da janela:
+  // como as seções são contíguas, no máximo uma cruza a faixa por vez, e ela é a ativa. No fim da
+  // página a última seção pode não alcançar a faixa; o rodapé à vista resolve esse caso.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-spy-link]")];
+  const ids = [...new Set(links.map((link) => link.dataset.spyLink))];
+  const sections = ids
+    .map((id) => (id ? document.getElementById(id) : null))
+    .filter((section): section is HTMLElement => section !== null);
+
+  const setActive = (id: string | null) => {
+    for (const link of links) {
+      if (link.dataset.spyLink === id) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
+    }
+  };
+
+  if (sections.length > 0) {
+    const crossing = new Set<string>();
+    let atEnd = false;
+    const update = () => {
+      const last = sections.at(-1)?.id ?? null;
+      const current = sections.find((section) => crossing.has(section.id))?.id ?? null;
+      setActive(atEnd ? last : current);
+    };
+
+    const line = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) crossing.add(entry.target.id);
+          else crossing.delete(entry.target.id);
+        }
+        update();
+      },
+      { rootMargin: "-35% 0px -64% 0px" },
+    );
+    for (const section of sections) line.observe(section);
+
+    const end = document.querySelector("[data-spy-end]");
+    if (end) {
+      new IntersectionObserver(
+        ([entry]) => {
+          atEnd = entry?.isIntersecting ?? false;
+          update();
+        },
+        { threshold: 0.9 },
+      ).observe(end);
+    }
+
+    // O toque no item já marca a seção, sem esperar a rolagem suave terminar (CA-01).
+    for (const link of links) {
+      link.addEventListener("click", () => setActive(link.dataset.spyLink ?? null));
+    }
+  }
+</script>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 20;
+    height: var(--bar-h);
+    border-bottom: 1px solid var(--border);
+    background-color: color-mix(in srgb, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: saturate(1.3) blur(10px);
+    backdrop-filter: saturate(1.3) blur(10px);
+  }
+
+  .bar__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .bar__brand {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 44px;
+    margin-right: auto;
+    overflow: hidden;
+    color: var(--ink);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bar__nav {
+    display: none;
+  }
+
+  .bar__nav ul {
+    display: flex;
+    gap: 2px;
+  }
+
+  .bar__nav a,
+  .menu__panel a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.7rem;
+    border-radius: var(--radius-sm);
+    color: var(--ink-muted);
+    font-size: var(--step--1);
+    text-decoration: none;
+  }
+
+  .bar__nav a:hover,
+  .menu__panel a:hover {
+    background-color: var(--surface-sunken);
+    color: var(--ink);
+  }
+
+  /* A seção ativa: tinta cheia + sublinhado de caneta. Não é só cor: o sublinhado também muda. */
+  .bar__nav a[aria-current="true"],
+  .menu__panel a[aria-current="true"] {
+    color: var(--ink);
+    text-decoration: underline 2px var(--accent);
+    text-underline-offset: 7px;
+  }
+
+  .menu {
+    position: relative;
+    flex: none;
+  }
+
+  .menu__button {
+    display: grid;
+    place-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .menu__button::-webkit-details-marker {
+    display: none;
+  }
+
+  .menu__button:hover,
+  .menu[open] .menu__button {
+    background-color: var(--surface-sunken);
+  }
+
+  .menu__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 13rem;
+    padding: var(--space-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-card);
+  }
+
+  .menu__panel a {
+    font-size: var(--step-0);
+  }
+
+  @media (min-width: 768px) {
+    .bar__nav {
+      display: block;
+    }
+
+    .menu {
+      display: none;
+    }
+  }
+</style>

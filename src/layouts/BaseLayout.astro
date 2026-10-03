@@ -1,8 +1,12 @@
 ---
-// Casca de toda página: <html lang>, SEO básico, tema sem flash e skip link.
-// Open Graph, JSON-LD e o resto do RF-21/22 entram na Etapa 2.
+// Casca de toda página: <html lang>, tema sem flash, SEO (RF-21), skip link, barra e rodapé.
 import "@/styles/global.css";
-import { alternatePath, HTML_LANG, LOCALES, t, type Locale } from "@/i18n/utils";
+import SiteFooter from "@/components/shell/SiteFooter.astro";
+import SiteHeader from "@/components/shell/SiteHeader.astro";
+import SkipLink from "@/components/shell/SkipLink.astro";
+import ThemeScript from "@/components/shell/ThemeScript.astro";
+import { alternatePath, HTML_LANG, LOCALES, type Locale } from "@/i18n/utils";
+import { getProfile } from "@/lib/content";
 
 interface Props {
   title: string;
@@ -10,11 +14,29 @@ interface Props {
   locale: Locale;
   // 404 e /cv: fora do índice, sem canonical nem hreflang (uma 404 não é "a mesma página").
   noindex?: boolean;
+  // /cv: documento de impressão. Sem barra, sem rodapé, sem script de tema e sempre no claro.
+  bare?: boolean;
+  // Repassado à troca de idioma (a 404 troca para a home do outro idioma).
+  languagePath?: string;
+  ogType?: "website" | "profile" | "article";
+  backToTop?: boolean; // repassado ao rodapé (a 404 é curta e não precisa dele)
 }
 
-const { title, description, locale, noindex = false } = Astro.props;
+const {
+  title,
+  description,
+  locale,
+  noindex = false,
+  bare = false,
+  languagePath,
+  ogType = "website",
+  backToTop = true,
+} = Astro.props;
 const site = Astro.site;
 if (!site) throw new Error("`site` precisa estar definido no astro.config.mjs (canonical, RF-21).");
+
+const profile = await getProfile();
+const name = profile.data.name;
 
 const absolute = (path: string) => new URL(path, site).href;
 const canonical = absolute(Astro.url.pathname);
@@ -23,33 +45,24 @@ const alternates = LOCALES.map((alt) => ({
   href: absolute(alternatePath(Astro.url.pathname, alt)),
 }));
 const xDefault = absolute(alternatePath(Astro.url.pathname, "en"));
+
+// RF-21: uma imagem 1200 × 630 para todas as páginas (public/og.png, gerada uma vez).
+const OG_LOCALE: Record<Locale, string> = { en: "en_US", pt: "pt_BR" };
+const ogImage = absolute("/og.png");
+const ogAlt = `${name} · ${profile.data.headline[locale]}`;
 ---
 
 <!doctype html>
-<html lang={HTML_LANG[locale]}>
+<html lang={HTML_LANG[locale]} data-theme={bare ? "light" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
-    {/*
-      RF-07 / CA-04: precisa rodar antes da primeira pintura, então é inline e bloqueante (o único,
-      RNF-02). Não mova para módulo nem para React: módulo é adiado e o flash do tema errado volta.
-      O conteúdo entra na CSP por hash (scripts/csp.mjs lê dist/); qualquer byte mudado muda o hash.
-    */}
-    <script is:inline>
-      (function () {
-        var theme = null;
-        try {
-          theme = localStorage.getItem("theme");
-        } catch (e) {}
-        if (theme !== "light" && theme !== "dark") {
-          theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        }
-        document.documentElement.dataset.theme = theme;
-      })();
-    </script>
+    <meta name="color-scheme" content={bare ? "light" : "light dark"} />
+    {!bare && <ThemeScript />}
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {noindex && <meta name="robots" content="noindex" />}
     {!noindex && <link rel="canonical" href={canonical} />}
     {
@@ -57,18 +70,35 @@ const xDefault = absolute(alternatePath(Astro.url.pathname, "en"));
         alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)
     }
     {!noindex && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    {
+      LOCALES.filter((alt) => alt !== locale).map((alt) => (
+        <meta property="og:locale:alternate" content={OG_LOCALE[alt]} />
+      ))
+    }
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+    <slot name="head" />
   </head>
   <body>
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:p-3"
-    >
-      {t("skip.toMain", locale)}
-    </a>
-    <slot name="header" />
+    {!bare && <SkipLink locale={locale} />}
+    {!bare && <SiteHeader locale={locale} name={name} languagePath={languagePath} />}
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <slot name="footer" />
+    {!bare && <SiteFooter locale={locale} name={name} backToTop={backToTop} />}
   </body>
 </html>

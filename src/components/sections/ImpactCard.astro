@@ -1,0 +1,173 @@
+---
+// RF-10: um key achievement com o número primeiro (skill voz-e-narrativa §3), depois problema →
+// ação → resultado, e a origem (empresa · cargo · período) no rodapé. O id é o destino dos
+// links da Trajetória (RF-17). Não é clicável: sem hover.
+import Icon from "@/components/icons/Icon.astro";
+import Scribble from "@/components/ui/Scribble.astro";
+import { t, tf, type Locale } from "@/i18n/utils";
+import type { Achievement, Experience } from "@/lib/content";
+import { formatPeriod } from "@/lib/dates";
+import { resolveLocalizable } from "@/lib/localizable";
+
+interface Props {
+  locale: Locale;
+  achievement: Achievement;
+  experience: Experience;
+}
+
+const { locale, achievement, experience } = Astro.props;
+const data = achievement.data;
+const metric = data.metric;
+const before = metric?.before ? resolveLocalizable(metric.before, locale) : undefined;
+const after = metric ? resolveLocalizable(metric.after, locale) : undefined;
+// A seta e os traços são desenho; o leitor de tela ouve a frase inteira.
+const spoken = before && after ? tf("metric.change", locale, { before, after }) : after;
+const titleId = `achievement-${achievement.id}-title`;
+const period = formatPeriod(
+  experience.data.start,
+  experience.data.end,
+  locale,
+  t("experience.present", locale),
+);
+---
+
+<article class="impact" id={`achievement-${achievement.id}`} aria-labelledby={titleId}>
+  {
+    metric && after && (
+      <>
+        <p class="impact__metric">
+          <span class="impact__figure" aria-hidden="true">
+            {before && (
+              <>
+                <span class="impact__old">
+                  {before}
+                  <Scribble kind="strike" />
+                </span>
+                <Icon name="arrow" class="impact__arrow" size={24} />
+              </>
+            )}
+            <span class="impact__new">
+              {after}
+              <Scribble kind="under" />
+            </span>
+          </span>
+          <span class="sr-only">{spoken}</span>
+        </p>
+        <p class="impact__label margin-note">{metric.label[locale]}</p>
+      </>
+    )
+  }
+  <h3 id={titleId} class="impact__title">{data.title[locale]}</h3>
+  <dl class="impact__story">
+    <div>
+      <dt>{t("achievement.problem", locale)}</dt>
+      <dd>{data.problem[locale]}</dd>
+    </div>
+    <div>
+      <dt>{t("achievement.action", locale)}</dt>
+      <dd>{data.action[locale]}</dd>
+    </div>
+    <div class="impact__result">
+      <dt>{t("achievement.result", locale)}</dt>
+      <dd>{data.result[locale]}</dd>
+    </div>
+  </dl>
+  <p class="impact__source margin-note">
+    {experience.data.company} · {experience.data.role[locale]} · {period}
+  </p>
+</article>
+
+<style>
+  .impact {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-card);
+  }
+
+  .impact__metric {
+    margin: 0;
+  }
+
+  .impact__figure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.25em;
+    font-size: var(--step-metric);
+    font-variant-numeric: lining-nums tabular-nums;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  .impact__old,
+  .impact__new {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .impact__old {
+    color: var(--ink-subtle);
+    font-size: 0.62em;
+    font-weight: 500;
+  }
+
+  .impact__new {
+    color: var(--accent-text);
+  }
+
+  .impact__figure :global(.impact__arrow) {
+    width: 0.5em;
+    height: 0.5em;
+    color: var(--ink-subtle);
+  }
+
+  .impact__label {
+    margin: var(--space-3) 0 var(--space-5);
+  }
+
+  .impact__title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--step-2);
+    line-height: 1.25;
+  }
+
+  .impact__story {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-5);
+  }
+
+  .impact__story div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .impact__story dt {
+    color: var(--ink-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .impact__story dd {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+
+  .impact__result dd {
+    color: var(--ink);
+  }
+
+  .impact__source {
+    margin: auto 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px dashed var(--border-strong);
+    color: var(--ink-subtle);
+  }
+</style>
