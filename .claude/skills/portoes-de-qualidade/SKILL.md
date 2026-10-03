@@ -51,8 +51,8 @@ motion.
 | Lighthouse mobile: Performance | ≥ 95 | `pnpm lhci` |
 | Lighthouse: Accessibility / SEO | = 100 / = 100 | `pnpm lhci` |
 | Lighthouse: Best Practices | ≥ 95 | `pnpm lhci` |
-| LCP (4G simulado) | < 1,5 s | `pnpm lhci` |
-| CLS | < 0,05 | `pnpm lhci` |
+| LCP (4G simulado) | < 2,5 s ("bom" do Core Web Vitals; decisão do Yuri em 2026-10-03, medido ~1,35 s na home) | `pnpm lhci` |
+| CLS | < 0,1 ("bom" do Core Web Vitals; medido 0,001 na home) | `pnpm lhci` |
 | JS bloqueante no `<head>` | só o script inline de tema (≤ 1 KB) | `pnpm budget` lê `dist/**/*.html` |
 | JS transferido no carregamento, antes de rolar | ≤ 10 KB gz | Playwright: soma `/_astro/*.js` até `load`, sem scroll |
 | Chunk de React antes de a ilha ficar visível | nenhum | Playwright: nenhum `react*`/`client*` até rolar a `#credentials` |

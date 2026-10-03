@@ -98,12 +98,30 @@ de 3 px põe o anel sobre o papel. Nunca zere o offset num controle com fundo `-
 
 ### Tipografia
 
-- **Source Serif 4** (variável, eixo `wght` 200–900, 51 KB): texto e títulos. **DM Mono** 400 e
-  500 (15 KB cada): nota de margem, números de rótulo, datas, chips. Só essas duas
-  (`--font-*: initial`); utilitários `font-serif` e `font-mono`.
+- **Source Serif 4** (variável, eixo `wght` 200–900, 51 KB): texto e títulos. **DM Mono só no
+  400** (15 KB): nota de margem, números de rótulo, datas, chips. Só essas duas
+  (`--font-*: initial`); utilitários `font-serif` e `font-mono`. **Não use mono 500**: o 500 foi
+  cortado em 2026-10-03 porque cada woff2 pedido pelo Hero antes da primeira pintura custa ~150 ms
+  de LCP no Lighthouse mobile simulado (home: 1503 → 1352 ms, limite 1500). Destaque em mono vem
+  da cor (`--ink` sobre `--ink-muted`), não do peso.
 - `fonts.css` declara as `@font-face` à mão: **só o latin, só woff2**, `font-display: swap`. Não
   importe o CSS do pacote: o da Source Serif 4 variável traz 6 subsets. Escolhemos o eixo `wght`
   e não o `opsz` (122 KB): o LCP é o título. Sem itálico (não foi baixado): não use `italic`.
+- **Fallback com métrica ajustada (CLS).** Logo depois da fonte web, na pilha: `"Source Serif
+  Fallback Times"` (local Times New Roman / Liberation Serif / Tinos, métrica compatível entre
+  si), `"Source Serif Fallback Noto"` (Android) e `"DM Mono Fallback"` (Menlo, Courier New,
+  Liberation Mono, DejaVu Sans Mono, Droid Sans Mono…). Cada face tem `size-adjust` e
+  `ascent/descent/line-gap-override`; os pesos de título têm faces próprias (200–549, 550–674,
+  675–900) porque o negrito local tem outra largura. Sem elas a troca de fonte re-quebrava o
+  Hero: CLS 0,079 em `/` e 0,027 em `/pt/`; com elas, 0,000 e 0,001. **Como medir de novo**
+  (se o conteúdo mudar muito ou entrar uma fonte): no Chromium, `FontFace` com o woff2 e com
+  `local(...)`, e `canvas.measureText` sobre o texto do `main` de `/` e `/pt/` (títulos à parte
+  para os pesos 600/650/700); size-adjust = largura web ÷ largura local; override = métrica
+  hhea da fonte web ÷ size-adjust (Source Serif 4: 1036/335/0; DM Mono: 992/310/0, em 1000 upm). Depois **confira o Hero** com o woff2 bloqueado (`page.route("**/*.woff2", r => r.abort())`) × carregado, largura por largura: a média deu 116,35% para a Times, mas 115,5% é o que mantém o Hero idêntico de 375 a 1440.
+- **Sem `<link rel="preload">` de fonte.** Medido: a primeira pintura adianta (1352 → 902 ms),
+  mas a LCP passa a ser a repintura com a fonte web e piora (até 1504 ms). `font-display:
+  optional` também foi medido e não muda a LCP simulada (a requisição sai do mesmo jeito);
+  fica `swap`, que garante a serifa na primeira visita.
 - A seta "→" (U+2192) **não está no subset latin**. Na métrica "antes → depois", use o SVG de seta.
   "−" (U+2212) está.
 
@@ -116,7 +134,7 @@ de 3 px põe o anel sobre o papel. Nunca zere o offset num controle com fundo `-
 | `--step-3` | 26 → 38 px | Proposta de valor | `text-step-3` |
 | `--step-4` | 32 → 52 px | Título de seção (h2) | `text-step-4` |
 | `--step-5` | 40 → 76 px | Nome (h1) | `text-step-5` |
-| `--step-metric` | 36 → 60 px | Número do Impacto | `text-metric` |
+| `--step-metric` | 36 → 56 px | Número do Impacto (o "antes → depois" cabe numa linha no cartão de 2 colunas; pior caso 1024 px) | `text-metric` |
 
 Pesos: corpo 400, títulos 650, h1 e número 700. Títulos com `letter-spacing: -0.012em` (h1
 `-0.02em`) e `text-wrap: balance`. Número com `font-variant-numeric: lining-nums tabular-nums`.
@@ -125,7 +143,7 @@ Pesos: corpo 400, títulos 650, h1 e número 700. Títulos com `letter-spacing: 
 
 - Espaço: `--space-1..6` = 4, 8, 12, 16, 20, 24 px; `--space-7..12` = 32, 40, 48, 64, 80, 96 px.
   No Tailwind, `p-N` = N × 4 px (então `p-4` = `--space-4`, mas `p-12` ≠ `--space-12`).
-- `--measure` 68ch · `--page-max` 72rem · `--page-gutter` clamp(1rem, 4.5vw, 2.5rem) ·
+- `--measure` 36em (~68 caracteres; **em, não ch**: o `ch` muda com a fonte e a troca fallback → web re-quebrava as linhas. Limite de linha em serifa vai sempre em em: 26ch = 13.8em) · `--page-max` 72rem · `--page-gutter` clamp(1rem, 4.5vw, 2.5rem) ·
   `--bar-h` 60 px.
 - Raio: `--radius-sm` 6 px (chip, botão de ícone) · `--radius-md` 10 px (painel) · `--radius-lg`
   16 px (cartão, álbum) · `--radius-pill` 999 px (CTA, selo de status).
@@ -172,9 +190,15 @@ status   production: círculo r5.5 cheio · development: círculo vazado + metad
 - **Nenhuma rolagem horizontal** de 360 a 1920 px (RNF-04). Em flex ou grid, filhos com texto
   longo levam `min-w-0`; o `body` tem `overflow-wrap: break-word`.
 - Alvos de toque ≥ 44×44 px (CTAs têm 48 px de altura).
-- **Margem do caderno (≥ `lg`):** cada seção vira grid `9rem | 1fr` com gap 2.5rem; o rótulo da
-  seção (`01 · Impact`) vai para a coluna 1, alinhado à direita, e uma linha vertical de 1,5 px
-  (`--accent` a 28%) separa as colunas. Abaixo de `lg`, o rótulo fica acima do h2.
+- **Margem do caderno (≥ `lg`):** cada seção vira grid `9rem | 1fr` com gap 2.5rem; o número da
+  seção (`01`, mono `--accent-text`, `aria-hidden`) vai para a coluna 1, alinhado à direita, e
+  uma linha vertical de 1,5 px (`--accent` a 28%) separa as colunas. Abaixo de `lg`, o número
+  fica acima do h2. **O h2 é o mesmo rótulo do item da barra** ("Impact", "Projects"…): quem toca
+  em "Impact" chega em "Impact", e o subtítulo `--ink-muted` faz o papel da frase de resultado
+  (validado na revisão da Etapa 2, 2026-10-03). Por isso a nota de margem é só o número. A
+  coluna de margem também recebe o período da Trajetória.
+- **Página curta:** o `body` é flex em coluna com `min-height: 100dvh` e o `main` cresce
+  (`base.css`, só `@media screen`): o rodapé da 404 fica no pé da tela, não no meio.
 
 ## 5. Inventário e especificação por seção
 
@@ -202,7 +226,7 @@ mono; a atual é `--accent`/`--accent-ink` com `aria-current`; a outra é link c
 
 **Hero.** Topo = `--bar-h` + clamp(2.5rem, 7vw, 6rem). Ordem: h1 (`--step-5`, 700) → papel
 (`--step-1`, 600, `--ink-muted`) → proposta de valor (`--step-3`, 400, máx. 26ch, com o trecho
-final sob `.scribble--under`) → local em mono → CTAs. CTAs em pílula de 48 px: **primário**
+`valuePropMark` do perfil sob `.scribble--under`; sem ele, a última oração) → local em mono → CTAs. CTAs em pílula de 48 px: **primário**
 (`--accent`, "See projects" + seta), **secundário** (borda 1,5 px `--ink`, "Download CV" + seta
 para baixo), **terciário** (texto `--accent-text` sublinhado, "Contact me"). < 520 px: o primário
 ocupa a linha inteira e os outros dois dividem a de baixo. Ao lado (≥ `lg`, coluna de 17rem
@@ -223,13 +247,18 @@ frase **não** ficam lado a lado no desktop: a coluna do texto ficaria estreita 
 `object-fit: cover`); a partir de `md`, 2 colunas `1.15fr | 1fr` com a capa à esquerda. Corpo:
 selos → h3 `--step-3` com o link da página → tagline `--ink-muted` → até 5 chips de stack (mono,
 `--surface-sunken`, `--radius-sm`) → ações de 44 px ("Read the case →" e, só se `public`,
-"Code on GitHub ↗" em nova aba). A capa repete o link: `tabindex="-1"` e `aria-hidden`. **Selos
+"Code on GitHub ↗" em nova aba). A capa repete o link: `tabindex="-1"` (fora do Tab, um destino
+uma parada), mas **com o `alt` localizado** e sem `aria-hidden`, porque a imagem prova o que o
+projeto faz (validado na Etapa 2). **Selos
 não são links:** pílula mono `--step--1`, borda 1,5 px `currentColor`. Status: cor do estado +
 ícone de forma diferente + texto. Visibilidade em `--ink-muted` com borda `--border-strong`:
 `code` + "Public · GitHub" ou `lock` + "Private code".
 
 **Trajetória.** Lista do mais recente ao mais antigo. Cada item: período em mono `--ink-subtle`
-(na coluna de margem a partir de `lg`, como o rótulo da seção), empresa · cargo em h3
+(na coluna de margem a partir de `lg`, alinhado à direita como o número da seção: o item é
+`position: relative` e o período `position: absolute; right: calc(100% + 2.5rem); width: 9rem`.
+Não crie uma segunda coluna de data dentro do conteúdo: são duas margens e o texto encolhe),
+empresa · cargo em h3
 `--step-2`, local, resumo `--ink-muted`. Os achievements que já estão no Impacto aparecem como
 link de âncora curto (`--accent-text`), não repetidos por extenso. Formação no fim, igual.
 
@@ -242,9 +271,10 @@ O que tem de **gamificado** sem poluir: adesivos colados, agrupados por emissor/
 contagem ("Claude Academy · 4"). Não há barra de XP, nem slot vazio, nem confete.
 
 - **Moldura:** `--surface-sunken` + `dot-grid`, borda `--border`, `--radius-lg`, padding
-  clamp(1.25rem, 4vw, 2.5rem). Cabeçalho: h3 (`--step-2`) "Claude Academy", contagem mono
-  `--accent-text` "· 4" (`aria-label="4 badges"`), emissor mono `--ink-subtle`. Uma dica curta
-  ("Tap a badge to flip it and verify it."). Grade de 2 colunas; 4 a partir de `md`. Selo de
+  clamp(1.25rem, 4vw, 2.5rem). Uma dica curta no topo do álbum, acima de todos os grupos (vale
+  para o álbum inteiro, não para um emissor). Por grupo, o cabeçalho: h3 (`--step-2`) "Claude
+  Academy", contagem mono `--accent-text` "· 4" (`aria-label="4 badges"`), emissor mono
+  `--ink-subtle`. Grade de 2 colunas; 4 a partir de `md`. Selo de
   `min(100%, 12.5rem)`, quadrado. Abaixo, `CredentialList.astro` com borda superior tracejada.
 - **Asset:** `src/assets/badges/<slug>.sticker.png` (~460 px, fundo transparente), exibido em
   140–200 px com `width`/`height` declarados.
@@ -257,11 +287,21 @@ contagem ("Claude Academy · 4"). Não há barra de XP, nem slot vazio, nem conf
 - **Hover/foco:** `.inner` vai a `translateY(-6px) rotate(0)` e a imagem troca para
   `sticker-lift`: o adesivo descolando. O anel de foco fica no `li`
   (`:has(button:focus-visible)`, offset 6 px), porque o botão some de costas quando o selo vira.
-- **Virado:** `.inner` em `rotate(0) rotateY(180deg)`. O verso fica em `inset: -5% -3%` (um
-  pouco maior que o selo, para caber o título), `rotateY(180deg)`, `--surface-raised` +
-  `square-grid`, borda 1,5 px `--border-strong`, raio 22 px. Conteúdo: h4 (nome, 650), data em
-  mono em 2 linhas ("Issued" / data localizada), link **Verify** de 44 px com ícone `external` e
-  "(opens in a new tab)". **Verso escondido com `visibility: hidden`** + `transition: visibility
+  **As regras de hover/foco levam `.sticker:not([data-flipped])`.** Sem isso,
+  `.sticker:has(.sticker__front:focus-visible) .sticker__inner` (especificidade 0,4,0) vence
+  `.sticker[data-flipped] .sticker__inner` (0,3,0): quem vira pelo teclado continua com o foco
+  no botão e o selo **não vira** (bug achado na Etapa 2).
+- **Virado:** `.inner` em `rotate(0) rotateY(180deg)`, `--surface-raised` + `square-grid`, borda
+  1,5 px `--border-strong`, raio 22 px. Conteúdo (RF-19): h4 (nome, 650), data em mono em 2
+  linhas ("Issued" / data localizada), as habilidades, link **Verify** de 44 px com ícone
+  `external` e "(opens in a new tab)". Com as habilidades o verso tem ~1,6× a altura do selo
+  (243 px num selo de 142 px a 375; também a 768, onde o selo de 4 colunas tem ~136 px), então
+  **o verso virado entra no fluxo e a linha cresce**, em vez de ficar `absolute` por cima do
+  vizinho de baixo: `.sticker[data-flipped]` perde o `aspect-ratio`; a frente fica presa ao topo
+  (`inset: 0 0 auto; aspect-ratio: 1`); o verso vira `position: relative; inset: auto; margin:
+  -5cqi -3cqi 0; min-height: 110cqi` (o `li` é `container-type: inline-size`). O conteúdo de
+  baixo desce enquanto o selo está virado; nada fica coberto. Desvirado, o verso volta a
+  `absolute` (escondido). **Verso escondido com `visibility: hidden`** + `transition: visibility
   0s linear var(--duration-base)` (e `transition-delay: 0s` ao virar): o link sai do Tab e da
   árvore de acessibilidade sem cortar a animação, o que `display: none` ou `hidden` fariam.
 - **Teclado:** Tab foca o selo (descola) → Enter/Espaço vira (`aria-expanded="true"`) → Tab vai
@@ -269,7 +309,8 @@ contagem ("Claude Academy · 4"). Não há barra de XP, nem slot vazio, nem conf
   desvira e **devolve o foco ao botão**. Um selo virado por vez: virar outro desvira o anterior,
   sem mover o foco.
 - **Reduced motion:** sem transição; hover não sobe nem endireita (só a sombra muda); virado =
-  `.inner` e verso sem transform, e a frente com `opacity: 0`. Em JS, cheque
+  `.inner` e verso sem transform, e a frente com `opacity: 0` (a regra de foco reduce também
+  leva `:not([data-flipped])`, senão o verso aparece girado em `--r`). Em JS, cheque
   `matchMedia("(prefers-reduced-motion: reduce)")` antes de qualquer animação imperativa.
 
 ## 7. Acessibilidade: requisito, não polimento
