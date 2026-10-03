@@ -1,0 +1,74 @@
+---
+// Casca de toda página: <html lang>, SEO básico, tema sem flash e skip link.
+// Open Graph, JSON-LD e o resto do RF-21/22 entram na Etapa 2.
+import "@/styles/global.css";
+import { alternatePath, HTML_LANG, LOCALES, t, type Locale } from "@/i18n/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  // 404 e /cv: fora do índice, sem canonical nem hreflang (uma 404 não é "a mesma página").
+  noindex?: boolean;
+}
+
+const { title, description, locale, noindex = false } = Astro.props;
+const site = Astro.site;
+if (!site) throw new Error("`site` precisa estar definido no astro.config.mjs (canonical, RF-21).");
+
+const absolute = (path: string) => new URL(path, site).href;
+const canonical = absolute(Astro.url.pathname);
+const alternates = LOCALES.map((alt) => ({
+  hreflang: HTML_LANG[alt],
+  href: absolute(alternatePath(Astro.url.pathname, alt)),
+}));
+const xDefault = absolute(alternatePath(Astro.url.pathname, "en"));
+---
+
+<!doctype html>
+<html lang={HTML_LANG[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    {/*
+      RF-07 / CA-04: precisa rodar antes da primeira pintura, então é inline e bloqueante (o único,
+      RNF-02). Não mova para módulo nem para React: módulo é adiado e o flash do tema errado volta.
+      O conteúdo entra na CSP por hash (scripts/csp.mjs lê dist/); qualquer byte mudado muda o hash.
+    */}
+    <script is:inline>
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem("theme");
+        } catch (e) {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {
+      !noindex &&
+        alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)
+    }
+    {!noindex && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:p-3"
+    >
+      {t("skip.toMain", locale)}
+    </a>
+    <slot name="header" />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

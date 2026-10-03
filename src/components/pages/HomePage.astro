@@ -1,0 +1,133 @@
+---
+// Home compartilhada por / e /pt: a diferença entre idiomas é só o conteúdo (RF-06).
+// Esqueleto da Fase 0: a ordem e as âncoras das seções (RF-01) já valem; o visual é da Etapa 2.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SECTION_IDS } from "@/i18n/ui";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+import {
+  getCredentials,
+  getImpactAchievements,
+  getJourney,
+  getProfile,
+  getPublishedProjects,
+} from "@/lib/content";
+import { formatPeriod } from "@/lib/dates";
+import { resolveLocalizable } from "@/lib/localizable";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const [profile, impact, projects, journey, credentials] = await Promise.all([
+  getProfile(),
+  getImpactAchievements(),
+  getPublishedProjects(),
+  getJourney(),
+  getCredentials(),
+]);
+const me = profile.data;
+const present = t("experience.present", locale);
+---
+
+<BaseLayout
+  title={`${me.name} · ${me.headline[locale]}`}
+  description={t("meta.home.description", locale)}
+  locale={locale}
+>
+  <header>
+    <h1>{me.name}</h1>
+    <p>{me.headline[locale]}</p>
+    <p>{me.valueProp[locale]}</p>
+    <p>{me.location[locale]}</p>
+  </header>
+
+  <section id={SECTION_IDS.impact} aria-labelledby="impact-title">
+    <h2 id="impact-title">{t("section.impact", locale)}</h2>
+    <ul>
+      {
+        impact.map((achievement) => (
+          <li id={`achievement-${achievement.id}`}>
+            {achievement.data.metric && (
+              <strong>
+                {achievement.data.metric.before &&
+                  `${resolveLocalizable(achievement.data.metric.before, locale)} → `}
+                {resolveLocalizable(achievement.data.metric.after, locale)}
+              </strong>
+            )}
+            {achievement.data.title[locale]}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id={SECTION_IDS.projects} aria-labelledby="projects-title">
+    <h2 id="projects-title">{t("section.projects", locale)}</h2>
+    <ul>
+      {
+        projects.map((project) => (
+          <li>
+            <a href={localizePath(`/projects/${project.id}/`, locale)}>{project.data.name}</a>
+            <p>{project.data.tagline[locale]}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id={SECTION_IDS.journey} aria-labelledby="journey-title">
+    <h2 id="journey-title">{t("section.journey", locale)}</h2>
+    <ol>
+      {
+        journey.map(({ experience, achievements }) => (
+          <li>
+            <h3>
+              {experience.data.company} · {experience.data.role[locale]}
+            </h3>
+            <p>{formatPeriod(experience.data.start, experience.data.end, locale, present)}</p>
+            <p>{experience.data.summary[locale]}</p>
+            <ul>
+              {achievements.map((achievement) => (
+                <li>{achievement.data.title[locale]}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+    {
+      me.education.length > 0 && (
+        <>
+          <h3>{t("journey.education", locale)}</h3>
+          <ul>
+            {me.education.map((item) => (
+              <li>
+                {item.institution} · {item.degree[locale]} ·{" "}
+                {formatPeriod(item.start, item.end, locale, present)}
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </section>
+
+  <section id={SECTION_IDS.credentials} aria-labelledby="credentials-title">
+    <h2 id="credentials-title">{t("section.credentials", locale)}</h2>
+    <ul>
+      {
+        [...credentials.album, ...credentials.list].map((credential) => (
+          <li>
+            {credential.data.name} · {credential.data.issuer}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id={SECTION_IDS.contact} aria-labelledby="contact-title">
+    <h2 id="contact-title">{t("section.contact", locale)}</h2>
+    <p><a href={`mailto:${me.email}`}>{me.email}</a></p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+// 404 compartilhada por /404.html e a versão PT (RF-05). O Caddy escolhe qual servir pelo
+// prefixo do caminho.
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<BaseLayout
+  title={t("notFound.title", locale)}
+  description={t("notFound.body", locale)}
+  locale={locale}
+  noindex
+>
+  <h1>{t("notFound.title", locale)}</h1>
+  <p>{t("notFound.body", locale)}</p>
+  <p><a href={localizePath("/", locale)}>{t("notFound.backHome", locale)}</a></p>
+</BaseLayout>

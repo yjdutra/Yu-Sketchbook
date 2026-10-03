@@ -1,0 +1,13 @@
+---
+import type { InferGetStaticPropsType } from "astro";
+import ProjectPage from "@/components/pages/ProjectPage.astro";
+import { getProjectPaths } from "@/lib/content";
+
+// RN-03: as rotas saem do mesmo helper que a listagem; draft não gera página em produção.
+export const getStaticPaths = getProjectPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { project } = Astro.props;
+---
+
+<ProjectPage locale="en" project={project} />

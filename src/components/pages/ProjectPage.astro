@@ -1,0 +1,34 @@
+---
+// Página de projeto compartilhada por /projects/<slug> e /pt/projects/<slug> (RF-03).
+// Esqueleto da Fase 0: capa, problema e o que faz. A página completa (RF-14) é da Etapa 2.
+import { Image } from "astro:assets";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { localizePath, t, type Locale } from "@/i18n/utils";
+import { getProfile, type Project } from "@/lib/content";
+
+interface Props {
+  locale: Locale;
+  project: Project;
+}
+
+const { locale, project } = Astro.props;
+const profile = await getProfile();
+const data = project.data;
+---
+
+<BaseLayout
+  title={`${data.name} · ${profile.data.name}`}
+  description={data.tagline[locale]}
+  locale={locale}
+>
+  {/* RN-03: em `pnpm dev` o draft aparece para revisão, sempre marcado. */}
+  {data.draft && <p role="status">{t("draft.banner", locale)}</p>}
+  <article>
+    <h1>{data.name}</h1>
+    <p>{data.tagline[locale]}</p>
+    <Image src={data.cover} alt={data.coverAlt[locale]} widths={[640, 1280]} sizes="100vw" />
+    <p>{data.problem[locale]}</p>
+    <p>{data.whatItDoes[locale]}</p>
+  </article>
+  <p><a href={localizePath("/", locale)}>{t("project.backHome", locale)}</a></p>
+</BaseLayout>
