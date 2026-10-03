@@ -1,0 +1,22 @@
+# Fonte: docs/Profile.pdf, Smartek Life · Software Engineer.
+experience: smartek-life-software-engineer
+title:
+  en: "A house that responds even offline"
+  pt: "Casa que responde mesmo sem internet"
+metric:
+  after: "10+"
+  label:
+    en: "types of device controlled from one app"
+    pt: "tipos de aparelho controlados num app só"
+problem:
+  en: "A home is never one brand of device: switches, gates, curtains, sound systems, remote controls."
+  pt: "Uma casa nunca tem uma marca só de aparelho: interruptores, portões, cortinas, som, controles remotos."
+action:
+  en: "I built control for 10+ device types, including any infrared or radio remote, working online and over the home's own network."
+  pt: "Implementei o controle de mais de 10 tipos de aparelho, inclusive qualquer controle infravermelho ou de rádio, online e pela rede da casa."
+result:
+  en: "The house keeps responding even with no internet."
+  pt: "A casa continua respondendo mesmo sem internet."
+skills: [React Native, IoT]
+featured: true
+order: 6

@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Supera.
+experience: supera-software-engineer
+title:
+  en: "Weather data turned into irrigation advice"
+  pt: "Do clima à recomendação de irrigação"
+problem:
+  en: "Growers needed to know when to irrigate, not just what the weather was."
+  pt: "O produtor precisava saber quando irrigar, não só como estava o tempo."
+action:
+  en: "I developed the mobile app for an agritech startup."
+  pt: "Desenvolvi o app de celular de uma startup do agro."
+result:
+  en: "The app turned weather monitoring into irrigation recommendations."
+  pt: "O app transformou o monitoramento do clima em recomendação de irrigação."
+skills: [React Native]
+order: 9

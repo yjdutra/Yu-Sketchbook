@@ -1,0 +1,22 @@
+# Fonte: docs/Profile.pdf, Smartek Life · Software Engineering.
+experience: smartek-life-software-engineering
+title:
+  en: "In-house CRM replacing a fragile tool chain"
+  pt: "CRM próprio no lugar de uma cadeia frágil"
+metric:
+  after: "−70%"
+  label:
+    en: "cost of sales and automation tools"
+    pt: "custo com ferramentas de vendas e automação"
+problem:
+  en: "Sales depended on four chained tools (Pipedrive, Zapier, Make, n8n). When any one failed, capturing new leads broke."
+  pt: "As vendas dependiam de quatro ferramentas encadeadas (Pipedrive, Zapier, Make, n8n). Se uma falhasse, a captura de leads parava."
+action:
+  en: "I replaced the chain with an in-house CRM connected to Meta, Pipedrive and WhatsApp, which fills in lead data automatically."
+  pt: "Troquei essa cadeia por um CRM próprio, integrado a Meta, Pipedrive e WhatsApp, que completa os dados dos leads sozinho."
+result:
+  en: "No single failure can stop lead capture anymore, and the cost of sales and automation tools fell 70%."
+  pt: "Nenhuma falha isolada derruba mais a captura de leads, e o custo com ferramentas de vendas e automação caiu 70%."
+skills: [Node.js, Next.js, PostgreSQL]
+featured: true
+order: 2

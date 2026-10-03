@@ -1,0 +1,24 @@
+# Fonte: docs/Profile.pdf, Smartek Life (cargo atual). A métrica é "dias → minutos" porque é a
+# mudança que o leigo sente; o −35% de erros fica no resultado.
+experience: smartek-life-software-engineering
+title:
+  en: "Every failure traced back to its source"
+  pt: "Cada falha rastreada até a origem"
+metric:
+  before: { en: "days", pt: "dias" }
+  after: { en: "minutes", pt: "minutos" }
+  label:
+    en: "time to find why something broke"
+    pt: "tempo para descobrir por que algo quebrou"
+problem:
+  en: "When a device failed in a customer's home, finding out why meant guessing. It could take days."
+  pt: "Quando um aparelho falhava na casa do cliente, descobrir o motivo era chute. Podia levar dias."
+action:
+  en: "I built tools that show exactly where and why something broke, across the app, the server and every device."
+  pt: "Montei ferramentas que mostram exatamente onde e por que algo quebrou: no app, no servidor e em cada aparelho."
+result:
+  en: "Finding the root cause went from days to minutes, and errors in production fell 35%."
+  pt: "Achar a causa de um problema passou de dias para minutos, e os erros em produção caíram 35%."
+skills: [Sentry, Elastic, MQTT]
+featured: true
+order: 1

@@ -1,0 +1,23 @@
+# Fonte: docs/Profile.pdf, Smartek Life · Software Engineering. A fonte não cita a stack do ERP,
+# então `skills` fica vazio (RN-06).
+experience: smartek-life-software-engineering
+title:
+  en: "An ERP four departments use every day"
+  pt: "Um ERP que quatro áreas usam todo dia"
+metric:
+  after: "4"
+  label:
+    en: "departments using it every day"
+    pt: "departamentos usando todo dia"
+problem:
+  en: "The company's management system (ERP) existed only as a mock-up built with drag-and-drop tools."
+  pt: "O sistema de gestão da empresa (ERP) existia só como um rascunho em ferramentas de arrastar e soltar."
+action:
+  en: "I rebuilt it as a system tailored to how the company actually works."
+  pt: "Reconstruí tudo como um sistema sob medida para o jeito que a empresa trabalha."
+result:
+  en: "Four departments now use it every day: inventory, operations, support and sales."
+  pt: "Hoje quatro departamentos usam o sistema todo dia: estoque, operações, suporte e vendas."
+skills: []
+featured: true
+order: 5

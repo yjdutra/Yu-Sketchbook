@@ -1,0 +1,20 @@
+# Fonte: docs/Profile.pdf. Cargo por decisão do Yuri no Checkpoint B (o LinkedIn diz "Software
+# Engineering"). O id do arquivo não muda: os achievements o referenciam (RN-04).
+company: Smartek Life
+role:
+  en: "Software Engineer & AI Engineer"
+  pt: "Engenheiro de Software e de IA"
+start: 2024-09-01
+location: "Goiânia, GO"
+summary:
+  en: >-
+    I work end to end on the company's building and home automation platform, from the apps to the
+    server and the data, with more than 10,000 devices in the field. I map how sales, operations,
+    support and inventory work, turn that into software, and help decide where AI is worth the
+    cost. I mentor a junior developer and an intern.
+  pt: >-
+    Trabalho de ponta a ponta na plataforma de automação predial e residencial da empresa, dos apps
+    ao servidor e aos dados, com mais de 10.000 aparelhos em campo. Mapeio como vendas, operações,
+    suporte e estoque trabalham, transformo isso em software e ajudo a decidir onde a IA vale o
+    custo. Oriento um dev júnior e um estagiário.
+order: 1

@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Supera. "Milhares de registros" não é número exato: sem métrica.
+experience: supera-software-engineer
+title:
+  en: "Field data synced without losing records"
+  pt: "Sincronização de campo sem perder registros"
+problem:
+  en: "Data had to come off sensors in the field, where connections drop and each session carries thousands of records."
+  pt: "Os dados precisavam sair de sensores no campo, onde a conexão cai e cada sessão carrega milhares de registros."
+action:
+  en: "I built the wireless sync between the sensors and the mobile app, controlling speed, data integrity and reconnection."
+  pt: "Construí a sincronização sem fio entre os sensores e o app, cuidando de velocidade, integridade e reconexão."
+result:
+  en: "A sync can stop and resume without losing or duplicating records."
+  pt: "A sincronização pode parar e recomeçar sem perder nem duplicar registros."
+skills: [BLE, React Native]
+order: 8

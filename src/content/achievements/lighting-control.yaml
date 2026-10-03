@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Smartek Life · Software Engineer. Sem número na fonte: só Trajetória.
+experience: smartek-life-software-engineer
+title:
+  en: "Lighting control, the most-used feature"
+  pt: "Iluminação, a função mais usada"
+problem:
+  en: "Lighting was the feature customers used most, so it had to feel instant."
+  pt: "A iluminação era a função que os clientes mais usavam, então precisava responder na hora."
+action:
+  en: "I built the platform's lighting integration and control."
+  pt: "Desenvolvi a integração e o controle de iluminação da plataforma."
+result:
+  en: "Customers set brightness and color from the app, on LED, dimmer and RGB lights."
+  pt: "O cliente ajusta brilho e cor pelo app, em luzes LED, dimmer e RGB."
+skills: [React Native]
+order: 7

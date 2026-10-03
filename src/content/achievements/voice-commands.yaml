@@ -1,0 +1,22 @@
+# Fonte: docs/Profile.pdf, Smartek Life · Software Engineering.
+experience: smartek-life-software-engineering
+title:
+  en: "Homes that understand voice commands"
+  pt: "Casas que entendem comando de voz"
+metric:
+  after: "95%"
+  label:
+    en: "of voice commands understood correctly"
+    pt: "dos comandos de voz entendidos corretamente"
+problem:
+  en: "Customers wanted to control their homes by talking to them."
+  pt: "Os clientes queriam controlar a casa falando com ela."
+action:
+  en: "I built GPT-powered voice control whose context can change without an app update, and shipped the Amazon Alexa integration."
+  pt: "Desenvolvi o comando de voz com GPT, com um contexto que muda sem atualizar o app, e entreguei a integração com a Amazon Alexa."
+result:
+  en: "It interprets 95% of commands correctly, and voice control now works beyond our own app."
+  pt: "O sistema acerta 95% dos comandos, e o controle por voz passou a funcionar além do nosso app."
+skills: [GPT, Amazon Alexa, AWS Lambda, AWS S3]
+featured: true
+order: 4

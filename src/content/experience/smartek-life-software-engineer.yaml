@@ -1,0 +1,18 @@
+# Fonte: docs/Profile.pdf.
+company: Smartek Life
+role:
+  en: "Software Engineer"
+  pt: "Engenheiro de Software"
+start: 2022-10-01
+end: 2024-09-01
+location: "Goiânia, GO"
+summary:
+  en: >-
+    I built the home automation app for iPhone and Android from a single codebase (React Native),
+    plus the layer that lets the app talk to the devices installed in each home. I also set shared
+    code standards for the team.
+  pt: >-
+    Construí o app de automação residencial para iPhone e Android com um código só (React Native)
+    e a camada que faz o app conversar com os aparelhos instalados em cada casa. Também padronizei
+    o código do time.
+order: 2

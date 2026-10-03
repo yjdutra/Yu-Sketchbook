@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Supera. A fonte não cita a stack deste app: `skills` vazio (RN-06).
+experience: supera-software-engineer
+title:
+  en: "A customer engagement app for retail"
+  pt: "App de relacionamento com o cliente no varejo"
+problem:
+  en: "A retail client needed to manage customer contacts and run promotional campaigns."
+  pt: "Um cliente do varejo precisava gerenciar contatos e rodar campanhas promocionais."
+action:
+  en: "I delivered the app end to end, from the screens to the server behind them."
+  pt: "Entreguei o app de ponta a ponta, das telas ao servidor por trás delas."
+result:
+  en: "The client got contact management and promotional campaigns in one app."
+  pt: "O cliente passou a gerenciar contatos e campanhas promocionais num app só."
+skills: []
+order: 10

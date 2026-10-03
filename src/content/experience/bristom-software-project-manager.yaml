@@ -1,0 +1,19 @@
+# Fonte: docs/Profile.pdf. Período sobreposto ao da Supera: a Supera absorveu a operação.
+company: Bristom
+role:
+  en: "Software Project Manager"
+  pt: "Gerente de Projetos de Software"
+start: 2021-05-01
+end: 2022-10-01
+location: "Goiânia, GO"
+summary:
+  en: >-
+    My first job in tech: I managed software projects at an agritech startup, turning what growers
+    needed into requirements for the development team. This is where I learned to code. Supera
+    later absorbed the operation, and I kept running Bristom's projects from there.
+  pt: >-
+    Meu primeiro trabalho em tecnologia: gerenciei projetos de software numa startup do agro,
+    traduzindo o que o produtor precisava em requisitos para o time de desenvolvimento. Foi aqui
+    que aprendi a programar. Depois a Supera absorveu a operação, e segui tocando os projetos da
+    Bristom por lá.
+order: 4

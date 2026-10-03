@@ -1,0 +1,131 @@
+# Fonte: README do repositório (github.com/yjdutra/Yu-book) e as imagens de .github/assets/.
+# RN-06: os números (US$ 0,20, 11 ferramentas, seis semanas, 449 + 60 testes) vêm do README.
+name: Yu-book
+tagline:
+  en: "A personal second brain with an AI assistant that works on your own notes."
+  pt: "Um segundo cérebro pessoal, com um assistente de IA que lê as suas próprias notas."
+status: production
+visibility: public
+repo: https://github.com/yjdutra/Yu-book
+problem:
+  en: >-
+    Notes, tasks and links to read later usually live in separate apps, and AI chat tools know
+    nothing about any of them. I wanted one place that answers a simple question: what needs me
+    now?
+  pt: >-
+    Notas, tarefas e links para ler depois costumam ficar em apps separados, e o chat de IA não
+    sabe nada sobre eles. Eu queria um lugar só que respondesse a uma pergunta simples: o que
+    precisa de mim agora?
+whatItDoes:
+  en: >-
+    Yu-book keeps notes, task boards and saved links in one place. An AI assistant reads all of it
+    and answers citing its sources, and AI agents I configure run multi-step routines, on demand
+    or on a schedule. Assistants like Claude can also use the app directly. I built it alone in
+    about six weeks, and it runs in production.
+  pt: >-
+    O Yu-book junta notas, quadros de tarefas e links salvos num lugar só. Um assistente de IA lê
+    tudo isso e responde citando as fontes, e agentes de IA que eu configuro executam rotinas de
+    várias etapas, na hora ou em horário marcado. Assistentes como o Claude também usam o app
+    diretamente. Construí sozinho em cerca de seis semanas, e ele está em produção.
+highlights:
+  - title:
+      en: "AI that creates only when you ask"
+      pt: "IA que só cria quando você pede"
+    body:
+      en: >-
+        The assistant can create notes and cards and mark a task as done, but it can't move, edit
+        or delete anything. Everything it creates carries an AI label and can be undone.
+      pt: >-
+        O assistente pode criar notas e cards e marcar uma tarefa como feita, mas não move, não
+        edita e não apaga nada. Tudo o que ele cria leva uma marca de IA e pode ser desfeito.
+  - title:
+      en: "A daily spending limit for AI"
+      pt: "Teto diário de gasto com IA"
+    body:
+      en: >-
+        Before every AI call, the app checks a daily spending cap (US$ 0.20 by default), and checks
+        again at each step. Two dashboards show what was spent by day, model and task.
+      pt: >-
+        Antes de cada chamada à IA, o app confere um teto diário de gasto (US$ 0,20 por padrão) e
+        confere de novo a cada etapa. Dois painéis mostram o gasto por dia, modelo e tarefa.
+  - title:
+      en: "AI assistants use the app directly"
+      pt: "Assistentes de IA usam o app direto"
+    body:
+      en: >-
+        Assistants like Claude can read and update the same notes and boards, with secure sign-in
+        (an MCP server with 11 tools and OAuth 2.1). Writing sits behind two independent layers of
+        protection.
+      pt: >-
+        Assistentes como o Claude leem e atualizam as mesmas notas e quadros, com login seguro (um
+        servidor MCP com 11 ferramentas e OAuth 2.1). Escrever exige passar por duas camadas de
+        proteção independentes.
+  - title:
+      en: "A second brain that searches in Portuguese"
+      pt: "Segundo cérebro com busca em português"
+    body:
+      en: >-
+        Search ignores accents, understands word variations ("autenticar" finds "autenticação")
+        and tolerates typos. Notes link to each other, and renaming one updates every link to it.
+      pt: >-
+        A busca ignora acentos, entende variações da palavra ("autenticar" encontra
+        "autenticação") e tolera erro de digitação. As notas se ligam umas às outras, e renomear
+        uma atualiza todos os links para ela.
+  - title:
+      en: "Built solo, with AI agents as the team"
+      pt: "Feito sozinho, com agentes de IA no time"
+    body:
+      en: >-
+        I built it in about six weeks with Claude Code and 9 specialist AI agents set up in the
+        repository. 449 automated tests run the whole server against a real database; 60 more
+        cover the MCP server.
+      pt: >-
+        Construí em cerca de seis semanas com o Claude Code e 9 agentes de IA especialistas
+        configurados no repositório. São 449 testes automáticos rodando o servidor inteiro contra
+        um banco de dados real, e outros 60 no servidor MCP.
+stack:
+  - TypeScript
+  - React
+  - Fastify
+  - PostgreSQL
+  - Prisma
+  - Tailwind CSS
+  - OpenRouter
+  - MCP
+  - Railway
+cover: ../../assets/projects/yu-book/cover.png
+coverAlt:
+  en: "Yu-book note editor with the AI assistant explaining a concept in a side panel, next to the note"
+  pt: "Editor de notas do Yu-book com o assistente de IA explicando um conceito num painel ao lado da nota"
+gallery:
+  - image: ../../assets/projects/yu-book/01-kanban-assistant.png
+    alt:
+      en: "Task board with the AI assistant listing the cards in progress and naming the boards it read"
+      pt: "Quadro de tarefas com o assistente de IA listando os cards em andamento e os quadros que consultou"
+    caption:
+      en: "The assistant answers from your own boards and shows its sources."
+      pt: "O assistente responde a partir dos seus quadros e mostra as fontes."
+  - image: ../../assets/projects/yu-book/02-routine-run.png
+    alt:
+      en: "A routine run: three AI agents in sequence, each step marked done, with model, tokens and cost"
+      pt: "Execução de uma rotina: três agentes de IA em sequência, cada etapa concluída, com modelo, tokens e custo"
+    caption:
+      en: "AI agents work step by step, and each step shows what it cost."
+      pt: "Os agentes de IA trabalham passo a passo, e cada etapa mostra quanto custou."
+  - image: ../../assets/projects/yu-book/03-spend-cap.png
+    alt:
+      en: "AI settings page showing today's spend against the US$ 0.20 daily cap and the last 30 days"
+      pt: "Ajustes de IA com o gasto de hoje diante do teto diário de US$ 0,20 e o histórico de 30 dias"
+    caption:
+      en: "AI spending is always visible and has a daily cap."
+      pt: "O gasto com IA fica sempre à vista e tem teto diário."
+  - image: ../../assets/projects/yu-book/04-claude-mcp.png
+    alt:
+      en: "Claude Code creating cards on a Yu-book board through the MCP server, each one marked as AI-made"
+      pt: "Claude Code criando cards num quadro do Yu-book pelo servidor MCP, cada um marcado como feito por IA"
+    caption:
+      en: "Claude works inside Yu-book directly."
+      pt: "O Claude trabalha dentro do Yu-book diretamente."
+order: 1
+featured: true
+draft: false

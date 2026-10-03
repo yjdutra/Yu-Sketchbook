@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Bristom.
+experience: bristom-software-project-manager
+title:
+  en: "From growers' problems to software requirements"
+  pt: "Do problema do produtor ao requisito de software"
+problem:
+  en: "Growers and agronomists describe problems in terms of crops, not software."
+  pt: "Produtores e agrônomos descrevem problemas em termos de lavoura, não de software."
+action:
+  en: "I sat with them, turned their needs into requirements and scope, and carried projects from discovery to delivery."
+  pt: "Sentei com eles, transformei a demanda em requisito e escopo, e levei os projetos da descoberta à entrega."
+result:
+  en: "That's where I learned to start from the process, not the code."
+  pt: "Foi ali que aprendi a começar pelo processo, não pelo código."
+skills: []
+order: 11

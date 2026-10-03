@@ -1,0 +1,18 @@
+# Fonte: docs/Profile.pdf.
+company: Supera Inovação em Tecnologia
+role:
+  en: "Software Engineer"
+  pt: "Engenheiro de Software"
+start: 2021-10-01
+end: 2022-10-01
+location: "Goiânia, GO"
+summary:
+  en: >-
+    At a software house, I shipped four apps for different clients, each with its own business,
+    technology and rules, so I learned to adapt fast. I worked on both the screens and the server
+    behind them, about 70% of the time on the screens.
+  pt: >-
+    Numa software house, entreguei quatro aplicações para clientes diferentes, cada uma com seu
+    negócio, sua tecnologia e suas regras, e aprendi a me adaptar rápido. Trabalhei nas telas e no
+    servidor por trás delas, cerca de 70% do tempo nas telas.
+order: 3

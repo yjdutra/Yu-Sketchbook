@@ -1,0 +1,16 @@
+# Fonte: docs/Profile.pdf, Bristom.
+experience: bristom-software-project-manager
+title:
+  en: "From project manager to engineer"
+  pt: "De gerente de projeto a engenheiro"
+problem:
+  en: "I was managing projects and watching the team build what I had specified."
+  pt: "Eu gerenciava os projetos e via o time construir o que eu tinha especificado."
+action:
+  en: "I started writing code myself: React web apps and React Native mobile apps, helping shape their design."
+  pt: "Comecei a programar também: apps web em React e apps de celular em React Native, ajudando a desenhar o código."
+result:
+  en: "That move took me into software engineering, and it's why I still design software from the process backwards."
+  pt: "Essa virada me levou para a engenharia de software, e é por isso que ainda desenho software a partir do processo."
+skills: [React, React Native]
+order: 13
