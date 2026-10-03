@@ -1,0 +1,162 @@
+/* Tokens do Yu-Sketchbook: Direção A, "Caderno & Caneta" (aprovada no Checkpoint A, 2026-10-03).
+   Papel creme, tinta de caneta azul, serifa para ler e mono para a nota de margem.
+   Fonte da verdade: skill design-system-portfolio §3. Cor nova entra aqui nos DOIS temas, com a
+   razão WCAG ao lado (piso AA: 4,5:1 texto, 3:1 texto grande e UI, RNF-03).
+
+   Os nomes descrevem o papel, não a cor. O tema é só CSS: o script inline do BaseLayout seta
+   data-theme antes da primeira pintura (RF-07, CA-04). Sem a variante dark: do Tailwind.
+
+   Contraste: "s" = --surface, "r" = --surface-raised, "k" = --surface-sunken. */
+
+/* ---------- Independentes de tema, registrados no Tailwind ----------
+   "static" emite as variáveis mesmo sem uso de utilitário, porque CSS com escopo e a ilha React
+   as leem por var(). Estes nomes caem em namespaces do Tailwind (radius, ease, font) e por isso
+   moram no @theme: assim rounded-md, ease-out e font-mono usam o nosso valor. */
+@theme static {
+  --font-*: initial; /* só as 2 famílias do projeto existem como utilitário */
+  --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --default-font-family: var(--font-serif);
+  --default-mono-font-family: var(--font-mono);
+
+  --radius-sm: 6px; /* chip, segmento EN/PT, botão de ícone */
+  --radius-md: 10px; /* campo, painel do menu */
+  --radius-lg: 16px; /* cartão, álbum */
+  --radius-pill: 999px; /* CTA e selo de status */
+
+  --ease-out: cubic-bezier(0.22, 0.8, 0.26, 1);
+}
+
+/* ---------- Independentes de tema ---------- */
+:root {
+  /* Escala tipográfica fluida, 375 → 1440 px. Base 16 → 18 px. */
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem); /* 13 → 14: nota de margem, rótulo */
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem); /* 16 → 18: texto corrido */
+  --step-1: clamp(1.125rem, 1.06rem + 0.33vw, 1.3125rem); /* 18 → 21: papel no hero */
+  --step-2: clamp(1.3125rem, 1.18rem + 0.6vw, 1.6875rem); /* 21 → 27: título de cartão */
+  --step-3: clamp(1.625rem, 1.4rem + 1.05vw, 2.375rem); /* 26 → 38: proposta de valor */
+  --step-4: clamp(2rem, 1.62rem + 1.9vw, 3.25rem); /* 32 → 52: título de seção (h2) */
+  --step-5: clamp(2.5rem, 1.85rem + 3.2vw, 4.75rem); /* 40 → 76: nome (h1) */
+  --step-metric: clamp(2.25rem, 1.55rem + 3.1vw, 3.75rem); /* 36 → 60: número do Impacto */
+
+  /* Espaço: passos de 4 px até 24, depois saltos. Em Tailwind, p-N = N × 4 px. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+
+  --measure: 68ch; /* largura de leitura do texto corrido */
+  --page-max: 72rem; /* 1152 px de conteúdo */
+  --page-gutter: clamp(1rem, 4.5vw, 2.5rem);
+  --bar-h: 60px; /* altura da barra fixa = scroll-margin das âncoras */
+
+  /* Motion: nada passa de 400 ms. Toda animação tem a saída reduce (base.css). */
+  --duration-fast: 150ms; /* hover, cor */
+  --duration-base: 250ms; /* adesivo descolando, flip */
+  --duration-draw: 380ms; /* traço à mão se desenhando, uma vez */
+}
+
+/* ---------- Tema claro (também o padrão sem atributo) ---------- */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --surface: #fbf7ee; /* papel creme */
+  --surface-raised: #fffdf8; /* cartão */
+  --surface-sunken: #f2ecdf; /* álbum, chip de stack */
+
+  --ink: #1e2230; /* s 14.80 · r 15.57 · k 13.45 */
+  --ink-muted: #474d5e; /* s 7.88 · r 8.29 · k 7.16 */
+  --ink-subtle: #636878; /* s 5.19 · r 5.46 · k 4.72 */
+
+  --accent: #2443b5; /* fundo do CTA; azul de caneta */
+  --accent-ink: #ffffff; /* sobre --accent 8.25 */
+  --accent-text: #2443b5; /* link e número: s 7.72 · r 8.12 · k 7.01 */
+  --sketch: #2443b5; /* traço à mão; decorativo, não carrega informação */
+
+  --border: #ded5c3; /* divisória e contorno de cartão; decorativo */
+  --border-strong: #8c8574; /* contorno que identifica controle: s 3.43 · r 3.61 · k 3.12 */
+  --focus: #2443b5; /* s 7.72 · r 8.12 · k 7.01 (offset ≥ 2 px: no botão azul seria 1:1) */
+
+  --status-production: #1d7348; /* s 5.46 · r 5.74 · k 4.96 */
+  --status-development: #8f5300; /* s 5.77 · r 6.07 · k 5.24 */
+  --status-archived: #5b606c; /* s 5.89 · r 6.20 · k 5.35 */
+
+  --grid: color-mix(in srgb, #2443b5 17%, transparent); /* ponto da grade de caderno */
+  --sticker-edge: #fffdf8; /* borda branca do adesivo recortado */
+  --shadow-card: 0 1px 0 rgb(30 34 48 / 0.04), 0 10px 28px -18px rgb(30 34 48 / 0.35);
+  /* Sombras do adesivo: valor de drop-shadow(), não de box-shadow, porque o PNG é recortado e
+     a sombra precisa seguir o contorno. Uso: filter: drop-shadow(var(--shadow-sticker)). */
+  --shadow-sticker: 0 2px 2px rgb(60 48 30 / 0.22);
+  --shadow-lift: 0 12px 14px rgb(60 48 30 / 0.28);
+}
+
+/* ---------- Tema escuro: caderno à noite ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface: #13161e;
+  --surface-raised: #1b1f2a;
+  --surface-sunken: #0e1016;
+
+  --ink: #ece7da; /* s 14.65 · r 13.33 · k 15.40 */
+  --ink-muted: #bcb6a8; /* s 8.95 · r 8.15 · k 9.41 */
+  --ink-subtle: #959083; /* s 5.68 · r 5.17 · k 5.97 */
+
+  --accent: #93acff;
+  --accent-ink: #0e1430; /* sobre --accent 8.25 */
+  --accent-text: #93acff; /* s 8.25 · r 7.51 · k 8.68 */
+  --sketch: #93acff;
+
+  --border: #2d3343;
+  --border-strong: #6b7287; /* s 3.77 · r 3.43 · k 3.97 */
+  --focus: #93acff; /* s 8.25 · r 7.51 · k 8.68 */
+
+  --status-production: #5fd39c; /* s 9.72 · r 8.84 · k 10.22 */
+  --status-development: #f0b45a; /* s 9.80 · r 8.92 · k 10.31 */
+  --status-archived: #a5a9b4; /* s 7.69 · r 7.00 · k 8.09 */
+
+  --grid: color-mix(in srgb, #93acff 13%, transparent);
+  --sticker-edge: #f4efe3;
+  --shadow-card: 0 10px 28px -18px rgb(0 0 0 / 0.8);
+  --shadow-sticker: 0 2px 3px rgb(0 0 0 / 0.55);
+  --shadow-lift: 0 14px 16px rgb(0 0 0 / 0.6);
+}
+
+/* ---------- Sem atributo e com o SO no escuro ----------
+   Só acontece com JS desligado (o script inline sempre seta data-theme). Cópia exata do bloco
+   escuro acima: quem muda um, muda o outro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --surface: #13161e;
+    --surface-raised: #1b1f2a;
+    --surface-sunken: #0e1016;
+    --ink: #ece7da;
+    --ink-muted: #bcb6a8;
+    --ink-subtle: #959083;
+    --accent: #93acff;
+    --accent-ink: #0e1430;
+    --accent-text: #93acff;
+    --sketch: #93acff;
+    --border: #2d3343;
+    --border-strong: #6b7287;
+    --focus: #93acff;
+    --status-production: #5fd39c;
+    --status-development: #f0b45a;
+    --status-archived: #a5a9b4;
+    --grid: color-mix(in srgb, #93acff 13%, transparent);
+    --sticker-edge: #f4efe3;
+    --shadow-card: 0 10px 28px -18px rgb(0 0 0 / 0.8);
+    --shadow-sticker: 0 2px 3px rgb(0 0 0 / 0.55);
+    --shadow-lift: 0 14px 16px rgb(0 0 0 / 0.6);
+  }
+}

@@ -1,0 +1,231 @@
+/* Base visual do Yu-Sketchbook (skill design-system-portfolio §2, §3, §7).
+   O preflight do Tailwind já zera margens e normaliza; aqui só o que é do projeto. */
+
+/* ---------- Ponte para o Tailwind ----------
+   "inline" faz o utilitário usar var(--surface) em vez de copiar o valor no build: é o que
+   deixa o tema trocar em tempo de execução. A paleta padrão do Tailwind é desligada de propósito
+   (--color-*: initial): só existe cor por papel. transparent e current continuam valendo. */
+@theme inline {
+  --color-*: initial;
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-sketch: var(--sketch);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-focus: var(--focus);
+  --color-status-production: var(--status-production);
+  --color-status-development: var(--status-development);
+  --color-status-archived: var(--status-archived);
+
+  /* text-step-0, text-step-5… com a entrelinha de cada passo */
+  --text-step--1: var(--step--1);
+  --text-step--1--line-height: 1.45;
+  --text-step-0: var(--step-0);
+  --text-step-0--line-height: 1.6;
+  --text-step-1: var(--step-1);
+  --text-step-1--line-height: 1.4;
+  --text-step-2: var(--step-2);
+  --text-step-2--line-height: 1.25;
+  --text-step-3: var(--step-3);
+  --text-step-3--line-height: 1.22;
+  --text-step-4: var(--step-4);
+  --text-step-4--line-height: 1.08;
+  --text-step-5: var(--step-5);
+  --text-step-5--line-height: 1.02;
+  --text-metric: var(--step-metric);
+  --text-metric--line-height: 1.05;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* âncora não some atrás da barra fixa (RF-02) */
+    scroll-padding-top: calc(var(--bar-h) + var(--space-4));
+  }
+
+  body {
+    background-color: var(--surface);
+    /* Grade pontilhada de caderno: CSS puro, sem imagem (orçamento de peso). Fica atrás do
+       texto em 13–17% de opacidade, então não compete com nada. */
+    background-image: radial-gradient(circle at 1px 1px, var(--grid) 1.1px, transparent 1.5px);
+    background-size: 24px 24px;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    overflow-wrap: break-word; /* palavra longa não abre rolagem horizontal (RNF-04) */
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--ink);
+    font-weight: 650;
+    letter-spacing: -0.012em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--accent-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Foco visível sempre (RNF-03). O offset não é enfeite: --focus é a cor do botão primário,
+     e encostado nele o contraste seria 1:1. Com offset o anel fica sobre o papel (≥ 7:1). */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* O <main tabindex="-1"> é só destino do skip link, não um controle. */
+  main:focus {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--accent) 22%, transparent); /* ink sobre ela ≥ 9.5 */
+    color: inherit;
+  }
+
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+  }
+}
+
+/* ---------- Primitivas do conceito "caderno" ---------- */
+@layer components {
+  /* Traço à mão: <svg class="scribble scribble--under" aria-hidden="true"> com <path pathLength="1">
+     dentro de um <span class="relative inline-block">. Decorativo: a informação está no texto. */
+  .scribble {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+    fill: none;
+    stroke: var(--sketch);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .scribble path {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .scribble--under {
+    left: -2%;
+    bottom: -0.3em;
+    width: 104%;
+    height: 0.42em;
+  }
+
+  .scribble--strike {
+    left: -10%;
+    top: 30%;
+    width: 120%;
+    height: 0.42em;
+  }
+
+  /* Nota de margem: data, empresa, "antes → depois". */
+  .margin-note {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0;
+  }
+}
+
+/* O traço se desenha uma vez, só para quem aceita movimento. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .scribble path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: scribble-draw var(--duration-draw) var(--ease-out) 200ms forwards;
+  }
+
+  .scribble path + path {
+    animation-delay: 320ms;
+  }
+}
+
+@keyframes scribble-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Rede de segurança: com reduce, nada se move. Componentes que trocam transform por estado
+   (o adesivo) ainda precisam da própria regra reduce, porque o estado final não pode depender
+   de transição (skill §6). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Adesivo do álbum ----------
+   Borda branca recortada sem imagem extra: 4 drop-shadows de 1,6 px na cor --sticker-edge
+   seguem o contorno do PNG; o quinto é a sombra. Em hover/foco, troque para .sticker-lift. */
+@utility sticker-cut {
+  filter: drop-shadow(1.6px 0 0 var(--sticker-edge)) drop-shadow(-1.6px 0 0 var(--sticker-edge))
+    drop-shadow(0 1.6px 0 var(--sticker-edge)) drop-shadow(0 -1.6px 0 var(--sticker-edge))
+    drop-shadow(var(--shadow-sticker));
+}
+
+@utility sticker-lift {
+  filter: drop-shadow(1.6px 0 0 var(--sticker-edge)) drop-shadow(-1.6px 0 0 var(--sticker-edge))
+    drop-shadow(0 1.6px 0 var(--sticker-edge)) drop-shadow(0 -1.6px 0 var(--sticker-edge))
+    drop-shadow(var(--shadow-lift));
+}
+
+/* Grade mais densa para o fundo do álbum e o verso do adesivo. */
+@utility dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, var(--grid) 1.1px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+@utility square-grid {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 12px 12px;
+}

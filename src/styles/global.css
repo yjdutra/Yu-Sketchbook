@@ -1,0 +1,7 @@
+/* Entrada única de CSS, importada pelo BaseLayout. Os tokens e a base visual são do ui-ux
+   (skill design-system-portfolio). Aqui só o Tailwind v4 e a ordem de importação:
+   fontes → tokens (com o @theme static) → base (com o @theme inline e as primitivas). */
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./tokens.css";
+@import "./base.css";
