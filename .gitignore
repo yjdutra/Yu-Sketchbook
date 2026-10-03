@@ -1,0 +1,28 @@
+# Dependências e build
+node_modules/
+dist/
+.astro/
+
+# Segredos
+.env
+.env.*
+!.env.example
+
+# docs/ é local: tem o Profile.pdf do LinkedIn (com telefone), o PRD e as badges de origem.
+# Num clone limpo não existe. Não force de volta ao índice (git add -f).
+docs/
+
+# Testes e relatórios
+playwright-report/
+test-results/
+.lighthouseci/
+coverage/
+
+# Artefatos do Playwright MCP (capturas e logs de sessão do agente), nunca versionados.
+.playwright-mcp/
+
+# Sistema e editor
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json

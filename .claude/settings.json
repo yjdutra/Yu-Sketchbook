@@ -1,0 +1,54 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install*)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm check*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm budget*)",
+      "Bash(pnpm lhci*)",
+      "Bash(pnpm preview*)",
+      "Bash(pnpm astro *)",
+      "Bash(pnpm exec playwright *)",
+      "Bash(pnpm exec vitest *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git ls-files*)",
+      "Bash(git grep *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(railway status*)",
+      "Bash(railway logs*)",
+      "Bash(railway variables*)",
+      "Bash(docker build *)",
+      "Bash(docker run *)",
+      "Bash(docker stats *)",
+      "Bash(docker stop *)",
+      "Bash(docker ps*)",
+      "Bash(curl -sI *)",
+      "Bash(python3 docs/badges/cut_badges.py)",
+      "mcp__playwright"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(railway up*)",
+      "Bash(railway deploy*)",
+      "Bash(railway redeploy*)",
+      "Bash(railway domain*)",
+      "Bash(railway down*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git add -f docs*)",
+      "Bash(git add --force docs*)"
+    ]
+  },
+  "enabledMcpjsonServers": ["playwright"]
+}
