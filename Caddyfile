@@ -1,0 +1,61 @@
+{
+	# TLS termina no edge da Railway; aqui é HTTP puro na porta que ela injeta.
+	auto_https off
+	admin off
+	persist_config off
+}
+
+:{$PORT:8080} {
+	root * /srv
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# Sem interest-cohort: o FLoC morreu e o Chrome acusa a feature desconhecida no console,
+		# o que custa ponto no Best Practices do Lighthouse.
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		X-Frame-Options DENY
+		-Server
+	}
+	# RNF-06: CSP gerada no build com o hash de cada <script> inline encontrado em dist/.
+	import /etc/caddy/csp.caddy
+
+	# RNF-07: asset com hash no nome é imutável; HTML sempre revalida. Com trailingSlash "always"
+	# toda página sai em */ (o index.html do diretório); a 404 tem o próprio header lá embaixo.
+	@hashed path /_astro/*
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+	@html path */ *.html
+	header @html Cache-Control "no-cache"
+
+	# RF-04: link legado do LinkedIn. 301 de verdade, não meta refresh, e direto à URL final
+	# (com a barra), sem um segundo salto. O {?query} preserva utm_* quando houver.
+	redir /about /{?query} 301
+	redir /about/ /{?query} 301
+	redir /pt/about /pt/{?query} 301
+	redir /pt/about/ /pt/{?query} 301
+
+	# Uma URL por página: /pt e /projects/x (sem barra) levam 301 para a versão com barra, que é a
+	# canônica do astro.config.mjs. Sem isso a mesma página responderia 200 em dois endereços.
+	# Só redireciona quando o diretório da página existe; caminho inexistente cai na 404.
+	@missingSlash {
+		not path */
+		file {path}/index.html
+	}
+	redir @missingSlash {path}/{?query} 301
+
+	# build.format "directory": cada página é <rota>/index.html, que o file_server já resolve
+	# sozinho; por isso não há try_files.
+	file_server
+
+	# RF-05: 404 no idioma do caminho. A PT sai em pt/404/index.html (format "directory"), a EN em
+	# 404.html. O file_server dentro de handle_errors responde com o status do erro (404), não 200.
+	handle_errors 404 {
+		encode zstd gzip
+		header Cache-Control "no-cache"
+		@pt path /pt/*
+		rewrite @pt /pt/404/index.html
+		rewrite * /404.html
+		file_server
+	}
+}

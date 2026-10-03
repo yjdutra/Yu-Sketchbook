@@ -1,0 +1,23 @@
+# O contexto do build leva só o que o build precisa.
+# docs/ fica fora por segurança dupla: é local e tem o Profile.pdf com o telefone (RN-07).
+docs
+.env
+.env.*
+
+# Gerados: o build refaz tudo dentro do container.
+node_modules
+dist
+.astro
+
+# Ferramentas, testes e relatórios
+.git
+.claude
+.mcp.json
+.playwright-mcp
+.vscode
+tests
+playwright-report
+test-results
+.lighthouseci
+coverage
+*.md
