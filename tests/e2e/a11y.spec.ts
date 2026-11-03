@@ -56,7 +56,7 @@ for (const theme of THEMES) {
   });
 
   test(`axe: menu mobile aberto, tema ${theme}`, async ({ page }) => {
-    test.skip(!isCollapsedViewport(page), "menu colapsado só abaixo de 768 px");
+    test.skip(!isCollapsedViewport(page), "menu colapsado só abaixo de 1024 px");
     await page.emulateMedia({ colorScheme: theme });
     await page.goto("/");
     await menuToggle(page).click();

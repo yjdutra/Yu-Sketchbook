@@ -61,8 +61,14 @@ export function sitePages(): SitePage[] {
   return pages;
 }
 
-// O botão que abre o menu colapsado (< 768 px, RF-02). Pode ser <summary>, <button> com
-// aria-expanded ou um disparador de popover: o teste aceita os três.
+// Largura em que a barra passa a listar as âncoras em linha (RF-02). É o breakpoint do
+// SiteHeader.astro: com a 6ª âncora ("Por diversão") o <ul> em linha pede 537 px em PT e a marca
+// seria cortada, então o <details> serve até 1023 px. Mudar o media query do header sem mudar
+// esta constante faz o teste pular no viewport errado — é por isso que ela é uma só.
+export const INLINE_NAV_MIN_WIDTH = 1024;
+
+// O botão que abre o menu colapsado (abaixo de INLINE_NAV_MIN_WIDTH, RF-02). Pode ser <summary>,
+// <button> com aria-expanded ou um disparador de popover: o teste aceita os três.
 export function menuToggle(page: Page): Locator {
   return page
     .getByRole("banner")
@@ -138,4 +144,5 @@ export function viewportWidths(testInfo: TestInfo): number[] {
   }
 }
 
-export const isCollapsedViewport = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
+export const isCollapsedViewport = (page: Page) =>
+  (page.viewportSize()?.width ?? 0) < INLINE_NAV_MIN_WIDTH;

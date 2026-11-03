@@ -41,7 +41,7 @@ for (const sitePage of sitePages()) {
 }
 
 test("RNF-04: o menu aberto também não cria rolagem horizontal", async ({ page }) => {
-  test.skip(!isCollapsedViewport(page), "menu colapsado só abaixo de 768 px");
+  test.skip(!isCollapsedViewport(page), "menu colapsado só abaixo de 1024 px");
   await page.goto("/");
   await menuToggle(page).click();
   const result = await overflow(page);

@@ -75,13 +75,29 @@ describe("strings de interface — RN-01", () => {
     expect(t(key, "pt").trim()).not.toBe("");
   });
 
-  it("as âncoras do RF-01 são as do PRD, iguais nos dois idiomas", () => {
+  // A lista é à mão de propósito: ela é a cópia da ordem do PRD, e serve para uma seção nova não
+  // entrar na home sem passar pela decisão de onde ela fica. "Por diversão" entra em 5º, depois
+  // das Certificações e antes do Contato — o Contato fecha a página.
+  it("as âncoras do RF-01 são as do PRD, na ordem, iguais nos dois idiomas", () => {
     expect(Object.values(SECTION_IDS)).toEqual([
       "impact",
       "projects",
       "journey",
       "credentials",
+      "playground",
       "contact",
     ]);
+  });
+
+  // Cada âncora tem o rótulo da barra e o subtítulo da seção (RF-01). Sem isto, uma seção nova
+  // apareceria com o h2 vazio só em um idioma.
+  it("cada âncora tem rótulo e subtítulo nos dois idiomas", () => {
+    for (const id of Object.values(SECTION_IDS)) {
+      for (const key of [`section.${id}`, `section.${id}.subtitle`] as (keyof typeof ui)[]) {
+        expect(ui[key], `falta a chave ${key}`).toBeDefined();
+        expect(t(key, "en").trim()).not.toBe("");
+        expect(t(key, "pt").trim()).not.toBe("");
+      }
+    }
   });
 });

@@ -9,7 +9,13 @@ import { parse } from "yaml";
 export const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 export const CONTENT_DIR = join(ROOT, "src/content");
 
-export type CollectionName = "profile" | "experience" | "achievements" | "projects" | "credentials";
+export type CollectionName =
+  | "profile"
+  | "experience"
+  | "achievements"
+  | "projects"
+  | "playground"
+  | "credentials";
 
 export type RawEntry = { id: string; file: string; data: Record<string, unknown> };
 
@@ -53,4 +59,10 @@ export function impactAchievements(): RawEntry[] {
   return loadCollection("achievements").filter(
     (a) => a.data.featured === true && a.data.metric !== undefined,
   );
+}
+
+// Seção 05 ("Por diversão"): mesma regra de getPlayground() — todos aparecem, só a ordem é do
+// conteúdo. Não há draft nem featured a filtrar aqui; é o que o teste confere.
+export function playgroundToys(): RawEntry[] {
+  return loadCollection("playground").sort((a, b) => Number(a.data.order) - Number(b.data.order));
 }

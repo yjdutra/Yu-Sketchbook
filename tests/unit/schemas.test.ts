@@ -7,6 +7,7 @@ import {
   credentialSchema,
   experienceSchema,
   localized,
+  playgroundSchema,
   profileSchema,
   projectSchema,
 } from "@/lib/schemas";
@@ -46,6 +47,17 @@ const validAchievement = {
   action: L("a", "a"),
   result: L("r", "r"),
   skills: ["React Native"],
+  order: 1,
+};
+
+// Seção 05 ("Por diversão"). O fixture tem o mínimo: `liveUrl` é opcional de propósito.
+const validToy = {
+  name: "PokéDex Arena",
+  tagline: L("All 1,025 Pokémon in one place.", "As 1025 espécies num lugar só."),
+  why: L("I wanted the rules right.", "Quis acertar as regras."),
+  repo: "https://github.com/yjdutra/pokedex-arena",
+  stack: ["React", "TypeScript"],
+  icon: "joystick",
   order: 1,
 };
 
@@ -126,6 +138,94 @@ describe("projectSchema — RN-02 / CA-06", () => {
   });
 });
 
+// Seção 05: o schema é leve de propósito (sem capa, sem status, sem visibilidade), mas as duas
+// regras que o sustentam são duras — todo experimento é público (tem `repo`) e todo texto tem os
+// dois idiomas (RN-01 / CA-08).
+describe("playgroundSchema — seção 05", () => {
+  it("o fixture mínimo passa (liveUrl é opcional)", () => {
+    const result = playgroundSchema.safeParse(validToy);
+    expect(result.error?.issues ?? []).toEqual([]);
+  });
+
+  it("sem repo é recusado, apontando para `repo`", () => {
+    const { repo: _repo, ...withoutRepo } = validToy;
+    const result = playgroundSchema.safeParse(withoutRepo);
+    expect(result.success).toBe(false);
+    expect(issuesAt(result)).toContain("repo");
+  });
+
+  it("repo fora do GitHub ou sem https é recusado", () => {
+    expect(playgroundSchema.safeParse({ ...validToy, repo: "https://gitlab.com/x/y" }).success).toBe(
+      false,
+    );
+    expect(playgroundSchema.safeParse({ ...validToy, repo: "http://github.com/x/y" }).success).toBe(
+      false,
+    );
+  });
+
+  it("liveUrl aceita https e recusa http", () => {
+    const live = "https://yjdutra.github.io/pokedex-arena/";
+    expect(playgroundSchema.safeParse({ ...validToy, liveUrl: live }).success).toBe(true);
+    const result = playgroundSchema.safeParse({ ...validToy, liveUrl: "http://exemplo.com/" });
+    expect(result.success).toBe(false);
+    expect(issuesAt(result)).toContain("liveUrl");
+  });
+
+  it("icon fora do enum é recusado (o desenho precisa existir em Icon.astro)", () => {
+    const result = playgroundSchema.safeParse({ ...validToy, icon: "rocket" });
+    expect(result.success).toBe(false);
+    expect(issuesAt(result)).toContain("icon");
+  });
+
+  it("stack vazia ou com 5 itens é recusada; 1 a 4 passa", () => {
+    expect(playgroundSchema.safeParse({ ...validToy, stack: [] }).success).toBe(false);
+    expect(playgroundSchema.safeParse({ ...validToy, stack: ["a", "b", "c", "d", "e"] }).success).toBe(
+      false,
+    );
+    expect(playgroundSchema.safeParse({ ...validToy, stack: ["a"] }).success).toBe(true);
+    expect(playgroundSchema.safeParse({ ...validToy, stack: ["a", "b", "c", "d"] }).success).toBe(
+      true,
+    );
+    // Item vazio no meio da lista também não passa: viraria uma pastilha sem texto no cartão.
+    expect(playgroundSchema.safeParse({ ...validToy, stack: ["a", ""] }).success).toBe(false);
+  });
+
+  it("texto só com `en` é recusado, em qualquer campo (RN-01 / CA-08)", () => {
+    for (const field of ["tagline", "why"] as const) {
+      const result = playgroundSchema.safeParse({ ...validToy, [field]: { en: "Only English" } });
+      expect(result.success, `${field} só com en deveria falhar`).toBe(false);
+      expect(issuesAt(result)).toContain(`${field}.pt`);
+    }
+  });
+
+  it("texto em branco não passa por Localized (RN-01 não é só a chave presente)", () => {
+    const result = playgroundSchema.safeParse({ ...validToy, why: L("Why", "   ") });
+    expect(result.success).toBe(false);
+    expect(issuesAt(result)).toContain("why.pt");
+  });
+
+  it("os três experimentos reais passam, e nenhum traz draft ou featured", () => {
+    const toys = loadCollection("playground");
+    expect(toys.length).toBeGreaterThan(0);
+    for (const toy of toys) {
+      const result = playgroundSchema.safeParse(toy.data);
+      expect(result.error?.issues ?? [], `${toy.id} no schema`).toEqual([]);
+      // O schema ignora chave desconhecida em silêncio: um `draft: true` aqui não esconderia
+      // nada e o YAML mentiria para quem o lê. A seção 05 não tem rascunho (ver getPlayground()).
+      expect(Object.keys(toy.data), `${toy.id}`).not.toContain("draft");
+      expect(Object.keys(toy.data), `${toy.id}`).not.toContain("featured");
+    }
+  });
+
+  // Não fixa qual experimento tem demo (isso é decisão de conteúdo), e sim que o conteúdo real
+  // exercita os dois ramos: senão o e2e do segundo link passaria sem testar nada.
+  it("o conteúdo real tem experimento com liveUrl e experimento sem", () => {
+    const toys = loadCollection("playground");
+    expect(toys.filter((toy) => toy.data.liveUrl !== undefined).length).toBeGreaterThan(0);
+    expect(toys.filter((toy) => toy.data.liveUrl === undefined).length).toBeGreaterThan(0);
+  });
+});
+
 describe("achievementSchema — métrica localizable", () => {
   it("aceita métrica neutra", () => {
     expect(achievements.safeParse(validAchievement).success).toBe(true);
@@ -173,6 +273,7 @@ const schemaOf: Record<CollectionName, z.ZodType> = {
   experience: experienceSchema,
   achievements: achievementsFromYaml,
   projects,
+  playground: playgroundSchema,
   credentials,
 };
 
