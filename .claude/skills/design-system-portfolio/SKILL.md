@@ -180,7 +180,17 @@ external <path d="M8 16 16 8M10 8h6v6"/>           code     <path d="M8.5 7 3.5 
 lock     <rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>
 status   production: círculo r5.5 cheio · development: círculo vazado + metade cheia
          (<path d="M12 6.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/>) · archived: círculo vazado
+joystick <circle cx="12" cy="5.6" r="2.4"/><path d="M12 8v5.2M5.4 19.4 7.1 13.2h9.8l1.7 6.2z"/>
+cat      <path d="M6.4 10.3 5.6 4.4 10.3 7.2a6.5 6.5 0 0 1 3.4 0L18.4 4.4l-.8 5.9a6.5 6.5 0 1 1-11.2 0z"/>
+         <path d="M9.7 13.4h.01M14.3 13.4h.01"/>  (olhos: traço de comprimento zero, redondo pelo linecap)
+satellite <path transform="rotate(-30 12 12)" d="M10.2 9.8h3.6v4.4h-3.6zM3.6 8h4.4v8H3.6zM16 8h4.4v8H16z
+          M8 12h2.2M13.8 12h2.2M12 9.8V6.8M10.6 6.8h2.8"/>  (um d só; a rotação é do desenho)
 ```
+
+Os três últimos foram escolhidos **olhando a 24 px**, não a 72 (`docs/design/screens/icons-final.png`,
+2026-11-03): o gato com bigode e nariz embola, o satélite com painéis na horizontal vira três
+caixas, e planeta com órbita lê "olho". Sobraram a cabeça com dois olhos de ponto, o satélite
+inclinado e o joystick de fliperama.
 
 ## 4. Layout e breakpoints
 
@@ -197,6 +207,11 @@ status   production: círculo r5.5 cheio · development: círculo vazado + metad
   em "Impact" chega em "Impact", e o subtítulo `--ink-muted` faz o papel da frase de resultado
   (validado na revisão da Etapa 2, 2026-10-03). Por isso a nota de margem é só o número. A
   coluna de margem também recebe o período da Trajetória.
+- **Sexto item na barra (medido em 2026-11-03, 768 px):** com "Playground"/"Diversão" o `<ul>` do
+  desktop vai a 497 px (EN) / 493 px (PT) e o nome do Yuri é cortado para "Yuri" (113 → 44 px,
+  `docs/design/screens/bar-768-six-items.png`). Com 6 seções a navegação em linha só cabe de
+  ~840 px para cima: ao entrar a 05, suba o breakpoint da barra de `md` para `lg` e deixe o
+  `<details>` servir 768–1023.
 - **Página curta:** o `body` é flex em coluna com `min-height: 100dvh` e o `main` cresce
   (`base.css`, só `@media screen`): o rodapé da 404 fica no pé da tela, não no meio.
 
@@ -210,6 +225,7 @@ status   production: círculo r5.5 cheio · development: círculo vazado + metad
 | Projetos | `ProjectCard.astro`, `StatusBadge.astro`, `VisibilityBadge.astro`; página: `ProjectGallery.astro` |
 | Trajetória | `Timeline.astro`, `TimelineItem.astro` |
 | Certificações | `BadgeAlbum.tsx` (ilha, §6), `CredentialList.astro` |
+| Diversão (05) | `PlaygroundCard.astro` (sem ilha, sem página de detalhe) |
 | Contato | `Contact.astro` |
 
 **Casca.** Barra fixa de `--bar-h`, fundo `--surface` a 88% + `backdrop-filter: blur(10px)`,
@@ -261,6 +277,36 @@ Não crie uma segunda coluna de data dentro do conteúdo: são duas margens e o 
 empresa · cargo em h3
 `--step-2`, local, resumo `--ink-muted`. Os achievements que já estão no Impacto aparecem como
 link de âncora curto (`--accent-text`), não repetidos por extenso. Formação no fim, igual.
+
+**Diversão (05, entre Certificações e Contato).** Apps feitos por diversão. O cartão é o
+**oposto** do de Projetos, e a diferença é o conteúdo da seção: sem capa, sem selo de status ou de
+visibilidade, sem página de detalhe. O de Projetos é uma peça **apoiada** no papel
+(`--surface-raised` + `--shadow-card` + borda sólida + `--radius-lg`); este é **desenhado** no
+papel: fundo transparente, **borda 1,5 px tracejada** `--border`, `--radius-md`, sem sombra. Esse
+é o **único** gesto descontraído da seção: sem `.scribble` (o traço carrega o número do Impacto e
+viraria enfeite solto), sem `square-grid` (a grade pontilhada do `body` já atravessa o cartão
+vazado) e sem rotação de adesivo (é a assinatura do álbum 04; repetir duas seções depois vira
+maneirismo). Ordem: ícone 24 px `--accent-text` + nome em h3 `--step-1` na mesma linha → tagline
+em **serifa `--step-0` `--ink`** → "por que eu fiz" em **serifa `--step--1` `--ink-muted`** →
+tecnologias em mono `--step--1` `--ink-subtle` separadas por
+`·` de CSS (`content: "\00B7" / ""` no `::after` do item **anterior**, senão o separador abre
+linha), **sem chip** → links em mono `--step--1` com 44 px de alvo (`code` + "Code"; `external` +
+demo com "(opens in a new tab)" em `sr-only`). A hierarquia é a tinta descendo
+(`--ink` → `--ink-muted` → `--ink-subtle`), não o corpo crescendo. **Mono aqui só no que é
+curto** (stack, links, o número da seção): a tagline real tem 85 caracteres em EN e 88 em PT e,
+em mono na coluna de 186 px de 768, vira uma parede de 5 linhas de máquina de escrever — o cartão
+perde o "dois segundos" (as duas versões lado a lado em
+`docs/design/screens/playground-real-768.png`, 2026-11-03). O "por que" um passo abaixo é o que
+segura o cartão em ~370 px a 768 e ~200 px a 375; se o 13 px parecer pequeno no celular, a saída é
+`--step-0` abaixo de 768, ao custo de ~25 px por cartão. Como o cartão não tem fundo,
+todo texto fica sobre `--surface` e vale a coluna "s" da §3 — **nenhum token novo**. Grade: 1
+coluna até 767 (gap `--space-4`), **3 colunas de 768 em diante** (em 768 o cartão fica com 222 px
+e o parágrafo com ~24 caracteres por linha: é o limite, e é o que preserva a leitura de "três de
+uma vez"); nada de 2 colunas, que com três itens deixaria um buraco. O cartão **não é clicável**:
+`:hover`/`:focus-within` só trocam a borda para `--border-strong` em `--duration-fast`, e quem
+marca o elemento ativo é o anel de foco global. Sem JS: com `reduce`, a rede do `base.css` já zera
+a transição. Teclado: Tab segue o DOM (Code → demo → cartão seguinte), sem armadilha e sem estado
+a fechar.
 
 **Contato.** Rótulo + h2 + uma frase. Botões: e-mail (primário), LinkedIn, GitHub, CV
 (secundários; externos com ícone `external` e "(opens in a new tab)" em `sr-only`).
