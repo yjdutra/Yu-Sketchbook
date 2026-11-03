@@ -83,4 +83,4 @@ Ver `docs/badges/badges.yaml`. São 4 badges da Claude Academy (Claude Code 101,
 Action, Introduction to MCP, MCP: Advanced Topics) e 2 da AWS sem imagem (Cloud Practitioner
 Essentials, AWS Cloud Club Sul-Americana). A "Introduction to MCP" tem badge mas não está no
 LinkedIn; entra no site por decisão do Yuri (2026-10-03). As da AWS ficam sem data, e o Cloud Club
-sem skills, data e link (skill `modelo-de-conteudo` §9).
+sem skills, data e link (skill `modelo-de-conteudo`, "Decisões do Yuri em vigor").

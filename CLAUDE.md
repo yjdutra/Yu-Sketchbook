@@ -11,7 +11,7 @@ Railway (plano Hobby) em `yuri-jorge.up.railway.app`, um link que já está publ
 | Linguagem | TypeScript strict + `noUncheckedIndexedAccess` |
 | Interatividade | Ilhas **Preact** (TSX), só `client:visible` (álbum de badges). React 19 custava 68 KB gz; Preact 10,9 KB (decisão do Yuri, 2026-10-03) |
 | Estilo | Tailwind v4 + tokens em CSS, tema por `data-theme` |
-| Conteúdo | Content Collections + Zod (`src/lib/schemas.ts`), texto `Localized = { en, pt }` |
+| Conteúdo | 6 Content Collections + Zod (`src/lib/schemas.ts`), texto `Localized = { en, pt }`. A `playground` (seção 05) é a leve |
 | Testes | Vitest, Playwright, @axe-core/playwright, Lighthouse CI |
 | Deploy | Dockerfile `node:24-alpine` → `caddy:2-alpine`, um serviço só |
 | Pacotes | pnpm, Node 24 |
@@ -32,6 +32,9 @@ Railway (plano Hobby) em `yuri-jorge.up.railway.app`, um link que já está publ
   e isso é proposital (RN-01).
 - **Projeto `public` tem `repo`; projeto `restricted` não tem** (RN-02). `draft: true` nunca vai para
   produção (RN-03).
+- **App da seção 05 (`playground`) não é projeto:** schema leve, sem capa, selo, `draft` nem
+  página de detalhe. Campo novo ali quer dizer que o experimento virou projeto e muda de
+  collection (`src/lib/schemas.ts`, acima do `playgroundSchema`).
 - **Nenhum JS bloqueia a primeira pintura; o framework da ilha só baixa quando ela fica visível** (JS inicial
   ≤ 10 KB gz, RNF-02). Ilha só com `client:visible`; nada de `client:load` na home.
 - **Sem biblioteca de UI nem de ícones.** Ícones são SVG à mão em `src/components/icons/`.
@@ -63,6 +66,12 @@ Os agentes não escrevem na própria memória: terminam com um bloco `## Para a 
 ## Fases
 
 0 Fundação → 1 Direção visual ∥ 2 Conteúdo → 3 Seções → 4 Qualidade → 5 Publicação (PRD §12).
-**Estado atual (2026-10-03): Etapas 1 e 2 concluídas e commitadas (site completo, portões verdes:
-Lighthouse 100 nas 4 páginas, axe 0 violações). A seguir: Checkpoint C do Yuri e Etapa 3, publicação
-(GitHub + Railway).**
+**Estado atual (2026-11-03): Etapa 3 concluída e o portfólio no ar.** A seção 05 "Por diversão"
+(`#playground`) entrou entre Certificações e Contato, a barra do topo passou a colapsar abaixo de
+1024 px, os portões estão verdes (Lighthouse 100 nas 4 páginas, axe 0 violações, 222 unitários,
+316 e2e) e a publicação aconteceu: repositório público em
+**`https://github.com/yjdutra/Yu-Sketchbook`** e produção em
+**`https://yuri-jorge.up.railway.app`** (o domínio exato do link do LinkedIn).
+**A seguir:** as duas pendências da skill `deploy-railway` §7 — migrar o `railway.json` para
+`.railway/railway.ts` **antes de 2026-12-01** e re-ancorar o alvo de RAM do CA-11 (decisão do
+Yuri) — e o que o Yuri priorizar depois; o passo de publicação do roteiro já foi dado.

@@ -5,10 +5,15 @@
 
 ## Onde ficam as coisas
 
-- Repo git local na `main` desde 2026-10-02, sem remoto; o público `yjdutra/Yu-Sketchbook` é criado na Etapa 3.
-- Railway CLI em `~/.local/bin/railway` (link para o Node 24 do nvm), logada como yjdutra@gmail.com; Docker disponível.
-- `gh` não logado em 2026-10-03: o Yuri roda `gh auth login` antes da Etapa 3.
+- `origin` é `github.com/yjdutra/Yu-Sketchbook`, público desde 2026-11-03, branch `main`, sem Pages e sem Actions.
+- Railway: projeto `Yu-Sketchbook` (8771c526), serviço `yu-sketchbook` (5c4dba9e) — os ids que `railway metrics --service` pede.
+- Railway CLI em `~/.local/bin/railway` (link para o Node 24 do nvm); Docker disponível.
+- Limites de gasto do workspace: US$ 15 (alerta) e US$ 20 (duro).
 
 ## O que já nos mordeu
 
+- A sessão da CLI da Railway expira sem aviso e volta `Unauthorized`; a cura está na skill `deploy-railway` §6. Não suponha sessão viva: o primeiro comando do turno confirma.
+
 ## Decisões em vigor
+
+- 2026-11-03: o repositório público saiu **sem LICENSE** por omissão, não por escolha; wiki no padrão. Pergunte ao Yuri antes de supor uma licença.

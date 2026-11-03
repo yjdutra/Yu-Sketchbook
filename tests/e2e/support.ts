@@ -62,9 +62,14 @@ export function sitePages(): SitePage[] {
 }
 
 // Largura em que a barra passa a listar as âncoras em linha (RF-02). É o breakpoint do
-// SiteHeader.astro: com a 6ª âncora ("Por diversão") o <ul> em linha pede 537 px em PT e a marca
-// seria cortada, então o <details> serve até 1023 px. Mudar o media query do header sem mudar
-// esta constante faz o teste pular no viewport errado — é por isso que ela é uma só.
+// SiteHeader.astro: a 768 px de viewport o <ul> com 6 âncoras mede 493 px em PT e a marca seria
+// cortada — em linha ele só cabe ao lado dela a partir de ~960 px, então o <details> serve até
+// 1023 px. A 1024 px de viewport o <ul> mede 528 px em PT e a marca fica inteira.
+// ATENÇÃO: esta constante é a única chave do breakpoint, e navigation, layout e a11y.spec.ts se
+// penduram nela. Mudar o @media do SiteHeader sem mudar este número NÃO deixa a suíte vermelha:
+// os dois testes do par (um pula se o viewport está colapsado, o outro se não está) se pulam em
+// cruz e tudo fica verde testando nada. Mudou o @media? mude aqui no mesmo commit e confira a
+// contagem de testes pulados.
 export const INLINE_NAV_MIN_WIDTH = 1024;
 
 // O botão que abre o menu colapsado (abaixo de INLINE_NAV_MIN_WIDTH, RF-02). Pode ser <summary>,

@@ -11,5 +11,6 @@
 ## O que já nos mordeu
 
 - Playwright MCP bloqueia `file://` e só salva captura dentro da raiz: sirva `docs/` com `python3 -m http.server` e salve em `docs/design/screens/` (`.playwright-mcp/` já ignorado, `.gitignore:22`).
+- Protótipo injetado na página de dev (`browser_evaluate`) sai sem o estilo do Astro, que é escopado por atributo: copie junto as regras de `Section.astro` ou a grade sai errada.
 
 ## Decisões em vigor

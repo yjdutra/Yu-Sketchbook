@@ -70,6 +70,8 @@ Resultado: Screens now open in under 400 ms — on the same hardware, at no extr
 | API / backend | the server behind the app | o servidor por trás do app |
 | No-code ERP | a makeshift system built with drag-and-drop tools | um sistema improvisado em ferramentas de arrastar e soltar |
 | Rate limit / spend cap | a daily spending limit for the AI | um teto diário de gasto com IA |
+| Seismic data / sismos | earthquakes | terremotos |
+| ISS | the space station | a estação espacial |
 
 O termo técnico pode aparecer **depois** da explicação, entre parênteses ou na lista de stack,
 para o leitor técnico achar: "lets AI assistants use the app directly (an MCP server)".
@@ -98,13 +100,28 @@ Escreva o EN, depois **reescreva** em PT com o ritmo do português:
 - Mantenha o tom: o PT também é direto e em primeira pessoa, sem "o profissional", sem
   terceira pessoa de currículo.
 
-## 7. Fatos e números
+## 7. Registro da seção 05 (Diversão)
+
+Os apps de fim de semana (`src/content/playground/`) são o **único** lugar do site com registro
+descontraído, e ele tem regra:
+
+- **`tagline`:** o que o app faz, em linguagem de leigo, uma linha. O jargão de domínio também é
+  traduzido aqui ("sismos" → "terremotos", "ISS" → "estação espacial"); a sigla, se precisar
+  aparecer, fica no `why`, nunca na tagline.
+- **`why`:** por que o Yuri fez, em primeira pessoa, 1 a 2 frases. É o campo que diverte.
+- **Número divertido entra** (1025 espécies, 15 expressões, oito fontes de dados). **Métrica de
+  negócio, contagem de testes e "impacto" ficam fora:** esta seção não é currículo, e o
+  recrutador já leu os números nas seções 02 e 03.
+- **Leve é o tom, não a qualidade.** O texto **não** diminui o trabalho. O Yuri chama esses apps
+  de "bobinhas"; **o site não** — quem escreve ali é o portfólio, não a conversa.
+
+## 8. Fatos e números
 
 O inventário completo do LinkedIn (cargos, períodos, key achievements e números) está em
 **`referencias/inventario-linkedin.md`**. Use-o como fonte de verdade junto com
 `docs/Profile.pdf`. **Nenhum número fora dele (ou do README do projeto) entra no site** (RN-06).
 
-## 8. Decisões do Yuri em vigor
+## 9. Decisões do Yuri em vigor
 
 - **2026-10-03:** o cargo atual na Smartek é exibido como **"Software Engineer & AI Engineer"** /
   "Engenheiro de Software e de IA" (o LinkedIn diz "Software Engineering"). É também a headline.

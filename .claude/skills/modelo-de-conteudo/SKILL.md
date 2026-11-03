@@ -1,8 +1,8 @@
 ---
 name: modelo-de-conteudo
 description: >-
-  Modelo de conteúdo do Yu-Sketchbook — as cinco Content Collections (profile, experience,
-  achievements, projects, credentials) em YAML validado por Zod, o tipo Localized {en, pt} que
+  Modelo de conteúdo do Yu-Sketchbook — as seis Content Collections (profile, experience,
+  achievements, projects, credentials, playground) em YAML validado por Zod, o tipo Localized {en, pt} que
   torna obrigatório o par de idiomas, as regras de negócio do PRD (RN-01 a RN-05: idioma,
   public×restricted e repo, draft, referências entre achievement e experiência, badge vs lista), o
   roteamento i18n EN em / e PT em /pt, onde ficam as imagens, e o checklist passo a passo para
@@ -52,6 +52,7 @@ Para uma entrada nova, **copie a forma de uma vizinha** (`projects/yu-book.yaml`
 | `achievements` | `src/content/achievements/<slug>.yaml` | Um key achievement (problema → ação → resultado) |
 | `projects` | `src/content/projects/<slug>.yaml` | Um projeto (público ou restrito) |
 | `credentials` | `src/content/credentials/<slug>.yaml` | Uma certificação, com ou sem badge |
+| `playground` | `src/content/playground/<slug>.yaml` | Um app feito por diversão (seção 05): schema leve, sem capa, sem selo e sem página de detalhe |
 
 O id da entrada é o nome do arquivo sem extensão, e vira o slug da rota. **Não renomeie** um
 arquivo de experiência: os achievements o referenciam. A `education` (RF-16) fecha a Trajetória.
@@ -146,7 +147,22 @@ reporte ao `frontend`.
    `localizable`; `label` `Localized`) e decida `featured` (a seção Impacto mostra de 6 a 8). Sem
    número, não há `metric`, e ele aparece só na Trajetória (RF-11).
 
-## 9. Decisões do Yuri em vigor
+## 9. Checklist: adicionar um app à Diversão (05)
+
+1. **A fonte é o README do próprio repositório** (o campo `repo`). Os três atuais têm README
+   denso, em português e na voz do Yuri: número e tom saem de lá, nada é inventado (RN-06).
+2. Crie `src/content/playground/<slug>.yaml` copiando a forma de uma vizinha
+   (`pokedex-arena.yaml`). Os campos moram em `src/lib/schemas.ts` (`playgroundSchema`), e o
+   comentário acima dele diz por que o schema é leve.
+3. **Sem `draft` e sem `featured`:** o que entra aparece, na ordem de `order`.
+4. `repo` é **obrigatório** (todo app desta seção é público); `liveUrl` só se houver demo.
+5. `icon` é um `enum`: o desenho tem de existir em `src/components/icons/Icon.astro`.
+6. O texto segue a seção **"Registro da seção 05"** da skill `voz-e-narrativa` — registro
+   descontraído, e nenhuma métrica de negócio.
+7. **Precisou de um campo novo?** O experimento virou projeto: ele muda de collection para
+   `projects`, em vez de engordar o schema leve.
+
+## 10. Decisões do Yuri em vigor
 
 - **2026-10-03:** a badge **Introduction to MCP entra** no álbum (4 selos da Claude Academy),
   embora não esteja no LinkedIn.

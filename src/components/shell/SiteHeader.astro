@@ -2,12 +2,14 @@
 // RF-02: barra fixa com as âncoras da home e o scroll-spy (aria-current na seção visível).
 // Abaixo de 1024 px as âncoras vão para um <details>: abre por toque e teclado sem ilha nem
 // biblioteca, e o <script> abaixo só acrescenta Esc, clique fora e fechar ao escolher.
-// Por que 1024 e não 768: com a 6ª âncora ("Por diversão") o <ul> em linha pede 499 px em PT a
-// 768 px, e a marca (o nome do Yuri, 113 px) sobra com 42 px — cortada pela elipse, que nenhum
-// teste de visibilidade pega. Medido no build servido, nos dois temas; em PT ela só volta
-// inteira perto de 880 px. O `--step--1` dos itens é fluido, então a largura do <ul> muda com o
-// viewport e não se extrapola de uma medida só. O breakpoint é o `lg` 1024 que o resto do
-// layout já usa, e o <details> serve 768–1023.
+// Por que 1024 e não 768: com a 6ª âncora ("Por diversão") o <ul> em linha mede 497 px em EN e
+// 493 px em PT a 768 px de viewport, e a marca (o nome do Yuri) cai de 113 px para 44 px —
+// cortada pela elipse, que nenhum teste de visibilidade pega. Em linha ela só cabe inteira a
+// partir de ~960 px, medido nos dois idiomas no build servido: medir só em EN dava ~880 px e
+// cortava o nome em PT. O `--step--1` dos itens é fluido, então a largura do <ul> muda com o
+// viewport e não se extrapola de uma medida só: a 1024 px de viewport o <ul> mede 528 px em PT
+// e a marca fica inteira. O breakpoint é o `lg` 1024 que o resto do layout já usa, e o
+// <details> serve 768–1023.
 import Icon from "@/components/icons/Icon.astro";
 import LanguageSwitch from "@/components/shell/LanguageSwitch.astro";
 import ThemeToggle from "@/components/shell/ThemeToggle.astro";
