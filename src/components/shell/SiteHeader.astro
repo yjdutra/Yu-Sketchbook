@@ -1,7 +1,13 @@
 ---
 // RF-02: barra fixa com as âncoras da home e o scroll-spy (aria-current na seção visível).
-// Abaixo de 768 px as âncoras vão para um <details>: abre por toque e teclado sem ilha nem
+// Abaixo de 1024 px as âncoras vão para um <details>: abre por toque e teclado sem ilha nem
 // biblioteca, e o <script> abaixo só acrescenta Esc, clique fora e fechar ao escolher.
+// Por que 1024 e não 768: com a 6ª âncora ("Por diversão") o <ul> em linha pede 499 px em PT a
+// 768 px, e a marca (o nome do Yuri, 113 px) sobra com 42 px — cortada pela elipse, que nenhum
+// teste de visibilidade pega. Medido no build servido, nos dois temas; em PT ela só volta
+// inteira perto de 880 px. O `--step--1` dos itens é fluido, então a largura do <ul> muda com o
+// viewport e não se extrapola de uma medida só. O breakpoint é o `lg` 1024 que o resto do
+// layout já usa, e o <details> serve 768–1023.
 import Icon from "@/components/icons/Icon.astro";
 import LanguageSwitch from "@/components/shell/LanguageSwitch.astro";
 import ThemeToggle from "@/components/shell/ThemeToggle.astro";
@@ -22,6 +28,7 @@ const items = [
   { id: SECTION_IDS.projects, label: t("section.projects", locale) },
   { id: SECTION_IDS.journey, label: t("section.journey", locale) },
   { id: SECTION_IDS.credentials, label: t("section.credentials", locale) },
+  { id: SECTION_IDS.playground, label: t("section.playground", locale) },
   { id: SECTION_IDS.contact, label: t("section.contact", locale) },
 ];
 ---
@@ -266,7 +273,7 @@ const items = [
     font-size: var(--step-0);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .bar__nav {
       display: block;
     }

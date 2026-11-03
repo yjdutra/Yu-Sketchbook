@@ -6,6 +6,7 @@ import {
   achievementSchema,
   credentialSchema,
   experienceSchema,
+  playgroundSchema,
   profileSchema,
   projectSchema,
 } from "@/lib/schemas";
@@ -28,9 +29,19 @@ const projects = defineCollection({
   schema: ({ image }) => projectSchema(image),
 });
 
+// A seção 05 ("Por diversão") não tem imagem nem referência: o schema entra inteiro.
+const playground = defineCollection({ loader: yaml("playground"), schema: playgroundSchema });
+
 const credentials = defineCollection({
   loader: yaml("credentials"),
   schema: ({ image }) => credentialSchema(image),
 });
 
-export const collections = { profile, experience, achievements, projects, credentials };
+export const collections = {
+  profile,
+  experience,
+  achievements,
+  projects,
+  playground,
+  credentials,
+};

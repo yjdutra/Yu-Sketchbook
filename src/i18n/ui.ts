@@ -11,6 +11,7 @@ export const ui = {
   "section.projects": { en: "Projects", pt: "Projetos" },
   "section.journey": { en: "Journey", pt: "Trajetória" },
   "section.credentials": { en: "Certifications", pt: "Certificações" },
+  "section.playground": { en: "For fun", pt: "Por diversão" },
   "section.contact": { en: "Contact", pt: "Contato" },
 
   // Subtítulos das seções: uma linha que diz ao recrutador o que ele vai achar ali.
@@ -29,6 +30,10 @@ export const ui = {
   "section.credentials.subtitle": {
     en: "Courses in applied AI and cloud.",
     pt: "Cursos de IA aplicada e nuvem.",
+  },
+  "section.playground.subtitle": {
+    en: "Three apps I built on weekends, with no deadline and no client.",
+    pt: "Três apps que fiz em fins de semana, sem prazo e sem cliente.",
   },
   "section.contact.subtitle": {
     en: "Open to remote work with international teams. Email is the fastest way to reach me.",
@@ -82,6 +87,11 @@ export const ui = {
   "project.highlights": { en: "Highlights", pt: "Destaques" },
   "project.stack": { en: "Built with", pt: "Feito com" },
   "project.gallery": { en: "Screens", pt: "Telas" },
+
+  // Seção 05: os dois rótulos de link são curtos de propósito (≤ 7 caracteres). Em 768 px a coluna
+  // do cartão tem 222 px e os dois links precisam caber numa linha só.
+  "playground.code": { en: "Code", pt: "Código" },
+  "playground.live": { en: "Play it", pt: "Jogar" },
 
   // Credenciais (RF-18).
   "credential.verify": { en: "Verify", pt: "Verificar" },
@@ -149,5 +159,6 @@ export const SECTION_IDS = {
   projects: "projects",
   journey: "journey",
   credentials: "credentials",
+  playground: "playground",
   contact: "contact",
 } as const;

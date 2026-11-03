@@ -1,0 +1,22 @@
+# Fonte: README do repositório (github.com/yjdutra/pokedex-arena).
+# RN-06: os números (1025 espécies, batalha 6×6) vêm do README.
+name: PokéDex Arena
+tagline:
+  en: "All 1,025 Pokémon in one place, plus a 6-on-6 battle that plays by the real rules."
+  pt: "As 1025 espécies de Pokémon num lugar só, mais uma batalha 6×6 com as regras de verdade."
+why:
+  en: >-
+    A Pokémon battle hides a surprising amount of arithmetic, and I wanted to get every bit of it
+    right. The rules live in their own file, with no screen attached.
+  pt: >-
+    Batalha de Pokémon esconde uma quantidade absurda de conta, e eu quis acertar cada uma delas.
+    As regras moram num arquivo só, sem tela nenhuma por perto.
+repo: https://github.com/yjdutra/pokedex-arena
+liveUrl: https://yjdutra.github.io/pokedex-arena/
+stack:
+  - React
+  - TypeScript
+  - Vite
+  - PokéAPI
+icon: joystick
+order: 1

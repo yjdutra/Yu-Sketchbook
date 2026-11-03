@@ -13,6 +13,7 @@ export type Profile = CollectionEntry<"profile">;
 export type Experience = CollectionEntry<"experience">;
 export type Achievement = CollectionEntry<"achievements">;
 export type Project = CollectionEntry<"projects">;
+export type Playground = CollectionEntry<"playground">;
 export type Credential = CollectionEntry<"credentials">;
 
 // RN-03: listagem, getStaticPaths e sitemap passam por aqui. Não filtre `draft` em outro lugar.
@@ -50,6 +51,13 @@ export async function getJourney(): Promise<JourneyItem[]> {
     experience,
     achievements: achievementsOf(sortedAchievements, experience.id),
   }));
+}
+
+// A seção 05 ("Por diversão"): os três sempre aparecem, só a ordem é do conteúdo. Não há draft
+// nem featured a filtrar aqui (ver o comentário de playgroundSchema).
+export async function getPlayground(): Promise<Playground[]> {
+  const toys = await getCollection("playground");
+  return toys.sort(byOrder);
 }
 
 // RF-10: os cartões de Impacto.

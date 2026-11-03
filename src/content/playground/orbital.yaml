@@ -1,0 +1,20 @@
+# Fonte: README do repositório (github.com/yjdutra/orbital).
+# RN-06: o número (8 fontes públicas) vem do README.
+name: ORBITAL
+tagline:
+  en: "One dark screen with eight live public feeds, from earthquakes to the space station."
+  pt: "Uma tela escura com oito fontes públicas ao vivo, de terremotos à estação espacial."
+why:
+  en: >-
+    I wanted to see how much of the planet comes free as public data: NASA events, earthquakes,
+    space weather, the ISS. Then I gave it the look of mission control.
+  pt: >-
+    Quis ver quanto do planeta sai de graça em dado público: eventos da NASA, terremotos, clima
+    espacial, a ISS. Depois dei a ele a cara de um centro de comando.
+repo: https://github.com/yjdutra/orbital
+stack:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+icon: satellite
+order: 3

@@ -1,11 +1,12 @@
 ---
 // Home compartilhada por / e /pt: a diferença entre idiomas é só o conteúdo (RF-06).
-// RF-01: Hero, Impacto, Projetos, Trajetória, Certificações e Contato, nessa ordem, cada seção
-// com a âncora fixa de SECTION_IDS.
+// RF-01: Hero, Impacto, Projetos, Trajetória, Certificações, Por diversão e Contato, nessa ordem,
+// cada seção com a âncora fixa de SECTION_IDS (a ordem da const é a ordem da página).
 import Contact from "@/components/sections/Contact.astro";
 import Credentials from "@/components/sections/Credentials.astro";
 import Hero from "@/components/sections/Hero.astro";
 import ImpactCard from "@/components/sections/ImpactCard.astro";
+import PlaygroundCard from "@/components/sections/PlaygroundCard.astro";
 import ProjectCard from "@/components/sections/ProjectCard.astro";
 import Section from "@/components/sections/Section.astro";
 import Timeline from "@/components/sections/Timeline.astro";
@@ -16,6 +17,7 @@ import {
   getCredentials,
   getImpactAchievements,
   getJourney,
+  getPlayground,
   getProfile,
   getPublishedProjects,
   type Experience,
@@ -26,12 +28,13 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const [profile, impact, projects, journey, credentials] = await Promise.all([
+const [profile, impact, projects, journey, credentials, playground] = await Promise.all([
   getProfile(),
   getImpactAchievements(),
   getPublishedProjects(),
   getJourney(),
   getCredentials(),
+  getPlayground(),
 ]);
 const me = profile.data;
 
@@ -114,8 +117,19 @@ const person = {
   </Section>
 
   <Section
-    id={SECTION_IDS.contact}
+    id={SECTION_IDS.playground}
     index={5}
+    title={t("section.playground", locale)}
+    subtitle={t("section.playground.subtitle", locale)}
+  >
+    <ul class="playground">
+      {playground.map((toy) => <PlaygroundCard locale={locale} toy={toy} />)}
+    </ul>
+  </Section>
+
+  <Section
+    id={SECTION_IDS.contact}
+    index={6}
     title={t("section.contact", locale)}
     subtitle={t("section.contact.subtitle", locale)}
   >
@@ -134,9 +148,29 @@ const person = {
     gap: var(--space-6);
   }
 
+  .playground {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   @media (min-width: 768px) {
     .impact-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Três de uma vez já em 768: é a leitura que diz "isso aqui é diversão". Duas colunas deixariam
+       um buraco, com três itens. */
+    .playground {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .playground {
+      gap: var(--space-5);
     }
   }
 </style>

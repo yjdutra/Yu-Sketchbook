@@ -1,0 +1,20 @@
+# Fonte: README do repositório (github.com/yjdutra/MyPCStatus).
+# RN-06: o número (15 expressões) vem do README.
+name: MyPCStatus
+tagline:
+  en: "A pixel-art cat that sits in the corner of the screen and tells you how the PC is doing."
+  pt: "Um gato pixel art que mora no canto da tela e conta como o computador está."
+why:
+  en: >-
+    Every system monitor looks like a spreadsheet. This one sweats when the machine overheats and
+    falls asleep when nothing is going on — 15 expressions, drawn pixel by pixel.
+  pt: >-
+    Todo monitor de sistema parece planilha. Esse sua quando a máquina esquenta e dorme quando nada
+    acontece — 15 expressões, desenhadas pixel a pixel.
+repo: https://github.com/yjdutra/MyPCStatus
+stack:
+  - Python
+  - GTK 3
+  - Cairo
+icon: cat
+order: 2

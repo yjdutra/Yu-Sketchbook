@@ -138,6 +138,22 @@ export const projectSchema = <I extends z.ZodType>(image: () => I) =>
       }
     });
 
+// Por que `playground` não é `projects`: na seção 05 não há capa, selo de status, visibilidade nem
+// página de detalhe — é a seção leve da home, e o schema leve é o que impede ela de virar
+// currículo. Sem `draft` e sem `featured`: os três experimentos sempre aparecem, na ordem de
+// `order`. Um campo novo aqui é sinal de que o experimento virou projeto e deve mudar de
+// collection.
+export const playgroundSchema = z.object({
+  name: z.string().min(1), // nome próprio, não traduz ("PokéDex Arena")
+  tagline: text, // uma linha, em linguagem de leigo
+  why: text, // 1 a 2 frases na voz do Yuri: é o campo descontraído da página
+  repo: githubUrl, // obrigatório, não opcional: todo experimento desta seção é público
+  liveUrl: httpsUrl.optional(), // só o PokéDex Arena tem demo jogável
+  stack: z.array(z.string().min(1)).min(1).max(4),
+  icon: z.enum(["joystick", "cat", "satellite"]), // o desenho mora em Icon.astro
+  order: z.number().int(),
+});
+
 export const credentialSchema = <I extends z.ZodType>(image: () => I) =>
   z.object({
     name: z.string().min(1), // nome oficial, não traduz
